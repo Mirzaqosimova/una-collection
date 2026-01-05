@@ -6,6 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('name_uz').notNullable();
     table.string('name_ru').notNullable();
     table.string('name_en').notNullable();
+    table.string('slug').notNullable();
     table
       .integer('category_id')
       .references('id')

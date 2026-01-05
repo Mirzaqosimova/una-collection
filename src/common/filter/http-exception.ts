@@ -93,7 +93,7 @@ ${message.stack}
 
   async sendMessage(chatId: string, message: string): Promise<any> {
     const url = `https://api.telegram.org/bot${process.env.ERROR_SENDER_BOT}/sendMessage`;
-    // const url = `https://api.telegram.org/bot7012008077:AAFfDI7UJLJphqUkazEGqHP4lIyyEA7QBcY/sendMessage`;
+    // const url = `https://api.telegram.org/bot{token}/sendMessage`;
 
     const data = {
       chat_id: chatId,

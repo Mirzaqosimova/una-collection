@@ -38,4 +38,6 @@ export class CreateProductDto {
   @ApiProperty({ enum: ProductType })
   @IsEnum(ProductType)
   type: ProductType;
+
+  slug?: string;
 }

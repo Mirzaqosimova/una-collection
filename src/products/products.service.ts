@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ProductsRepository } from 'src/repositories/products';
 import { ProductOptionsRepository } from 'src/repositories/product_options';
 import { CreateProductDto } from './dto/create-products.dto';
+import slug from 'slug';
 
 @Injectable()
 export class ProductsService {
@@ -18,7 +19,10 @@ export class ProductsService {
     if (hasDuplicate) {
       throw new Error('product already exists');
     }
-    return this.productsRepository.create(payload);
+    const slugName = slug(`${payload.name_uz}`, {
+      lower: true,
+    });
+    return this.productsRepository.create({ ...payload, slug: slugName });
   }
 
   findAll() {
@@ -56,7 +60,14 @@ export class ProductsService {
     if (hasDuplicate && hasDuplicate.id !== id) {
       throw new Error('product already exists');
     }
-    return this.productsRepository.update({ id }, payload);
+
+    const slugName = slug(`${payload.name_uz}`, {
+      lower: true,
+    });
+    return this.productsRepository.update(
+      { id },
+      { ...payload, slug: slugName },
+    );
   }
 
   remove(id: number) {
