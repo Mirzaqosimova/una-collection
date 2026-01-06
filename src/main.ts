@@ -1,9 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cors from 'cors';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
-import { HttpExceptionFilter } from './common/filter/http-exception';
-import { HttpService } from '@nestjs/axios';
+import {
+  BadRequestException,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 export const whiteList: RegExp[] = [/http:\/\/localhost:[0-9]{4}$/];
@@ -31,7 +33,7 @@ async function bootstrap() {
         'https://una-admin.netlify.app',
         'https://319daeb9b333.ngrok-free.app',
       ],
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
       credentials: true,
     }),
@@ -40,11 +42,24 @@ async function bootstrap() {
   // IMPORTANT: handle preflight
   // app.options('*', cors());
 
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      exceptionFactory: (errors) => {
+        const firstError = errors[0];
+        const firstConstraint = Object.values(firstError.constraints)[0];
+
+        return new BadRequestException(firstConstraint);
+      },
+    }),
+  );
+
   app.enableVersioning({
     type: VersioningType.URI,
     defaultVersion: '1',
   });
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  // app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   const config = new DocumentBuilder()
     .setTitle('Reservation')
     .setDescription('Reservation ORG API Documentation')

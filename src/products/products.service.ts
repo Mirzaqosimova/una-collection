@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { ProductsRepository } from 'src/repositories/products';
 import { ProductOptionsRepository } from 'src/repositories/product_options';
 import { CreateProductDto } from './dto/create-products.dto';
@@ -12,12 +12,17 @@ export class ProductsService {
   ) {}
 
   async create(payload: CreateProductDto) {
+    payload.name_uz = payload.name_uz
+      .trim()
+      .replace(/\s+/g, ' ')
+      .replace(/['‘’`]/g, "'");
+
     const hasDuplicate = await this.productsRepository.findBy({
       name_uz: payload.name_uz,
     });
 
     if (hasDuplicate) {
-      throw new Error('product already exists');
+      throw new ConflictException('product already exists');
     }
     const slugName = slug(`${payload.name_uz}`, {
       lower: true,
@@ -37,7 +42,7 @@ export class ProductsService {
     const hasProduct = await this.productsRepository.findBy({ id });
 
     if (!hasProduct) {
-      throw new Error('product not found');
+      throw new ConflictException('product not found');
     }
 
     const productOptions = await this.productOptionsRepository.findAllUserSide({
@@ -53,12 +58,17 @@ export class ProductsService {
   }
 
   async update(id: number, payload: CreateProductDto) {
+    payload.name_uz = payload.name_uz
+      .trim()
+      .replace(/\s+/g, ' ')
+      .replace(/['‘’`]/g, "'");
+
     const hasDuplicate = await this.productsRepository.findBy({
       name_uz: payload.name_uz,
     });
 
     if (hasDuplicate && hasDuplicate.id !== id) {
-      throw new Error('product already exists');
+      throw new ConflictException('product already exists');
     }
 
     const slugName = slug(`${payload.name_uz}`, {

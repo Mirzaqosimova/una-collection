@@ -11,7 +11,7 @@ export class MeasurementsRepository {
     return trx ? trx('measurements') : this.knex('measurements');
   }
 
-  findBy(param: { id?: number; name?: string }) {
+  findBy(param: { id?: number; name_uz?: string }) {
     return this.getBuilder().where(param).first();
   }
 
@@ -24,12 +24,16 @@ export class MeasurementsRepository {
 
   async find(query: MeasurementsFilter) {
     const { product_type, page, q } = query;
-    const bQuery = this.getBuilder().select('*');
+    const bQuery = this.getBuilder().select('*').orderBy('id', 'desc');
 
     if (product_type) {
       bQuery.where('product_type', product_type);
     }
-    const [totalCount] = await bQuery.clone().clearSelect().count('id');
+    const [totalCount] = await bQuery
+      .clone()
+      .clearSelect()
+      .clearOrder()
+      .count('id');
 
     bQuery.offset(page.offset).limit(page.limit);
 

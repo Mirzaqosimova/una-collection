@@ -9,6 +9,7 @@ import {
   HttpStatus,
   Delete,
   Put,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MediaFilesService } from './media-files.service';
@@ -61,7 +62,9 @@ export class MediaFilesController {
     @Body() body: CreateMediaFileDto,
   ) {
     if (!file) {
-      throw new BadRequestException('No file provided or invalid file format.');
+      throw new UnprocessableEntityException(
+        'No file provided or invalid file format.',
+      );
     }
     return this.mediaFilesService.uploadFile(file, body);
   }
@@ -99,7 +102,9 @@ export class MediaFilesController {
     @Body() body: UpdateMediaFileDto,
   ) {
     if (!file) {
-      throw new BadRequestException('No file provided or invalid file format.');
+      throw new UnprocessableEntityException(
+        'No file provided or invalid file format.',
+      );
     }
     return this.mediaFilesService.update(file, body);
   }

@@ -31,7 +31,7 @@ export class ColorsController {
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.colorsService.findOne(+id);
+    return this.colorsService.findOne(id);
   }
 
   @Patch(':id')

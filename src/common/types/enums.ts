@@ -15,3 +15,9 @@ export enum MediaFileAssociations {
 export enum MediaFileUsages {
   PHOTO = 'photo',
 }
+
+export enum LangEnum {
+  UZ = 'uz',
+  RU = 'ru',
+  EN = 'en',
+}

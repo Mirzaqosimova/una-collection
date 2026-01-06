@@ -17,5 +17,5 @@ export class CreateCategoryDto {
 
   @ApiProperty({ enum: ProductType })
   @IsEnum(ProductType)
-  type: ProductType;
+  product_type: ProductType;
 }

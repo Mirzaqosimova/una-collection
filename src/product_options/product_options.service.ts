@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateProductOptionDto } from './dto/create-product_option.dto';
 import { ProductOptionsRepository } from 'src/repositories/product_options';
 import { ProductOptionsFilter } from './dto/query.dto';
@@ -16,7 +16,7 @@ export class ProductOptionsService {
     });
 
     if (hasDuplicateProduct) {
-      throw new Error('Duplicate product options');
+      throw new ConflictException('Duplicate product options');
     }
 
     return this.productOptionsRepository.create(payload);
@@ -38,7 +38,7 @@ export class ProductOptionsService {
     });
 
     if (hasDuplicateProduct) {
-      throw new Error('Duplicate product options');
+      throw new ConflictException('Duplicate product options');
     }
 
     return this.productOptionsRepository.update({ id }, updateProductOptionDto);

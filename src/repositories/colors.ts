@@ -21,13 +21,24 @@ export class ColorsRepository {
   }
 
   async find(query: ColorsFilter) {
-    const { type, page } = query;
-    const bQuery = this.getBuilder().select('*');
+    const { type, page, q, lang } = query;
+    const bQuery = this.getBuilder().select('*').orderBy('id', 'desc');
 
     if (type) {
       bQuery.where('type', type);
     }
-    const [totalCount] = await bQuery.clone().clearSelect().count('id');
+    if (q) {
+      bQuery.where((builder) =>
+        builder
+          .whereILike(`name_${lang}`, `%${q}%`)
+          .orWhereILike('code', `%${q}%`),
+      );
+    }
+    const [totalCount] = await bQuery
+      .clone()
+      .clearSelect()
+      .clearOrder()
+      .count('id');
 
     bQuery.offset(page.offset).limit(page.limit);
 

@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import * as path from 'path';
 import * as fs from 'fs/promises';
@@ -20,7 +24,7 @@ export class MediaFilesService {
   ): Promise<{ path: string }> {
     try {
       if (!file) {
-        throw new BadRequestException(
+        throw new UnprocessableEntityException(
           'No file provided or invalid file format.',
         );
       }

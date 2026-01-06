@@ -19,6 +19,10 @@ export class CreateColorDto {
   @IsString()
   code: string;
 
+  @ApiProperty()
+  @IsString()
+  color: string;
+
   @ApiProperty({ enum: ColorType })
   @IsEnum(ColorType)
   type: ColorType;
