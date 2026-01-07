@@ -21,3 +21,9 @@ export enum LangEnum {
   RU = 'ru',
   EN = 'en',
 }
+
+export enum PaymentType {
+  CLICK = 'click',
+  CONTACT = 'contact',
+  TERMINAL = 'terminal',
+}

@@ -9,7 +9,7 @@ import {
   Query,
   ParseIntPipe,
 } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
+import { CreateMeasurementDto } from './dto/create-measurement.dto';
 import { MeasurementsFilter } from './dto/query.dto';
 import { MeasurementsService } from './measurement.service';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -20,7 +20,7 @@ export class MeasurementsController {
   constructor(private readonly measurementsService: MeasurementsService) {}
 
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
+  create(@Body() createCategoryDto: CreateMeasurementDto) {
     return this.measurementsService.create(createCategoryDto);
   }
 
@@ -37,7 +37,7 @@ export class MeasurementsController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateCategoryDto: CreateCategoryDto,
+    @Body() updateCategoryDto: CreateMeasurementDto,
   ) {
     return this.measurementsService.update(+id, updateCategoryDto);
   }

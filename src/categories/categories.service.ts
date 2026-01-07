@@ -3,25 +3,25 @@ import {
   Injectable,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { CreateMeasurementDto } from './dto/create-measurement.dto';
-import { MeasurementsFilter } from './dto/query.dto';
-import { MeasurementsRepository } from 'src/repositories/measurement';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { CategoriesRepository } from 'src/repositories/categories';
 import { ProductOptionsRepository } from 'src/repositories/product_options';
+import { CategoriesFilter } from './dto/query.dto';
 
 @Injectable()
-export class MeasurementsService {
+export class CategoriesService {
   constructor(
-    private readonly measurementsRepository: MeasurementsRepository,
+    private readonly categoriesRepository: CategoriesRepository,
     private readonly productsOptionsRepository: ProductOptionsRepository,
   ) {}
 
-  async create(payload: CreateMeasurementDto) {
+  async create(payload: CreateCategoryDto) {
     payload.name_uz = payload.name_uz
       .trim()
       .replace(/\s+/g, ' ')
       .replace(/['‘’`]/g, "'");
 
-    const hasCategory = await this.measurementsRepository.findBy({
+    const hasCategory = await this.categoriesRepository.findBy({
       name_uz: payload.name_uz,
     });
 
@@ -29,31 +29,31 @@ export class MeasurementsService {
       throw new ConflictException('Category already exists');
     }
 
-    return this.measurementsRepository.create(payload);
+    return this.categoriesRepository.create(payload);
   }
 
-  findAll(query: MeasurementsFilter) {
-    return this.measurementsRepository.find(query);
+  findAll(query: CategoriesFilter) {
+    return this.categoriesRepository.find(query);
   }
 
   findOne(id: number) {
-    return this.measurementsRepository.findBy({ id });
+    return this.categoriesRepository.findBy({ id });
   }
 
-  async update(id: number, payload: CreateMeasurementDto) {
+  async update(id: number, payload: CreateCategoryDto) {
     payload.name_uz = payload.name_uz
       .trim()
       .replace(/\s+/g, ' ')
       .replace(/['‘’`]/g, "'");
 
-    const hasDuplicate = await this.measurementsRepository.findBy({
+    const hasDuplicate = await this.categoriesRepository.findBy({
       name_uz: payload.name_uz,
     });
 
     if (hasDuplicate && hasDuplicate.id !== id) {
       throw new ConflictException('Category already exists');
     }
-    return this.measurementsRepository.update({ id }, payload);
+    return this.categoriesRepository.update({ id }, payload);
   }
 
   async remove(id: number) {
@@ -64,6 +64,6 @@ export class MeasurementsService {
     if (hasProducts) {
       throw new UnprocessableEntityException('Category has products');
     }
-    return this.measurementsRepository.delete({ id });
+    return this.categoriesRepository.delete({ id });
   }
 }

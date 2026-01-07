@@ -1,28 +1,28 @@
 import { Knex } from 'knex';
 import { InjectKnex } from 'nestjs-knex';
+import { CreateCategoryDto } from 'src/categories/dto/create-category.dto';
+import { CategoriesFilter } from 'src/categories/dto/query.dto';
 import { getResult } from 'src/common/dto/find-all-response';
-import { CreateMeasurementDto } from 'src/measurement/dto/create-measurement.dto';
-import { MeasurementsFilter } from 'src/measurement/dto/query.dto';
 
-export class MeasurementsRepository {
+export class CategoriesRepository {
   constructor(@InjectKnex() private readonly knex: Knex) {}
 
   private getBuilder(trx?: Knex.Transaction) {
-    return trx ? trx('measurements') : this.knex('measurements');
+    return trx ? trx('categories') : this.knex('categories');
   }
 
   findBy(param: { id?: number; name_uz?: string }) {
     return this.getBuilder().where(param).first();
   }
 
-  create(payload: CreateMeasurementDto) {
+  create(payload: CreateCategoryDto) {
     return this.getBuilder()
       .insert(payload)
       .returning('*')
       .then((res) => res[0]);
   }
 
-  async find(query: MeasurementsFilter) {
+  async find(query: CategoriesFilter) {
     const { product_type, page, q } = query;
     const bQuery = this.getBuilder().select('*').orderBy('id', 'desc');
 
@@ -44,7 +44,7 @@ export class MeasurementsRepository {
     );
   }
 
-  update(param: { id: number }, payload: CreateMeasurementDto) {
+  update(param: { id: number }, payload: CreateCategoryDto) {
     return this.getBuilder()
       .where(param)
       .update(payload)

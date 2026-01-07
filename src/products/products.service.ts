@@ -3,6 +3,7 @@ import { ProductsRepository } from 'src/repositories/products';
 import { ProductOptionsRepository } from 'src/repositories/product_options';
 import { CreateProductDto } from './dto/create-products.dto';
 import slug from 'slug';
+import { ProductType } from 'src/common/types/enums';
 
 @Injectable()
 export class ProductsService {
@@ -45,11 +46,15 @@ export class ProductsService {
       throw new ConflictException('product not found');
     }
 
-    const productOptions = await this.productOptionsRepository.findAllUserSide({
-      product_id: id,
-      is_sold: false,
-    });
-    hasProduct['products'] = productOptions;
+    if (hasProduct.type === ProductType.CLOTHES) {
+      const productOptions =
+        await this.productOptionsRepository.findAllUserSide({
+          product_id: id,
+          is_sold: false,
+        });
+      hasProduct['products'] = productOptions;
+    }
+
     return hasProduct;
   }
 

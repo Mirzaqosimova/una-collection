@@ -11,6 +11,7 @@ import { join } from 'path';
 import { cwd } from 'process';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule } from '@nestjs/config';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ConfigModule } from '@nestjs/config';
     ProductOptionsModule,
     OrdersModule,
     MediaFilesModule,
+    CategoriesModule,
   ],
 })
 export class AppModule {}
