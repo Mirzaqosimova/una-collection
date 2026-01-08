@@ -21,7 +21,7 @@ export class CreateProductOptionDto {
 
   @ApiProperty()
   @IsInt()
-  size_id: number;
+  measurement_id: number;
 
   @ApiProperty()
   @IsInt()
