@@ -2,8 +2,8 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { ProductsRepository } from 'src/repositories/products';
 import { ProductOptionsRepository } from 'src/repositories/product_options';
 import { CreateProductDto } from './dto/create-products.dto';
-import slug from 'slug';
 import { ProductType } from 'src/common/types/enums';
+import { ProductsFilter } from './dto/query.dto';
 
 @Injectable()
 export class ProductsService {
@@ -25,14 +25,13 @@ export class ProductsService {
     if (hasDuplicate) {
       throw new ConflictException('product already exists');
     }
-    const slugName = slug(`${payload.name_uz}`, {
-      lower: true,
-    });
+
+    const slugName = createSlug(payload.name_uz);
     return this.productsRepository.create({ ...payload, slug: slugName });
   }
 
-  findAll() {
-    return this.productsRepository.findUserSide();
+  findAll(query: ProductsFilter) {
+    return this.productsRepository.findAll(query);
   }
 
   findUserSide() {
@@ -59,7 +58,7 @@ export class ProductsService {
   }
 
   findOne(id: number) {
-    return this.productOptionsRepository.findBy({ id });
+    return this.productsRepository.findBy({ id });
   }
 
   async update(id: number, payload: CreateProductDto) {
@@ -75,10 +74,7 @@ export class ProductsService {
     if (hasDuplicate && hasDuplicate.id !== id) {
       throw new ConflictException('product already exists');
     }
-
-    const slugName = slug(`${payload.name_uz}`, {
-      lower: true,
-    });
+    const slugName = createSlug(payload.name_uz);
     return this.productsRepository.update(
       { id },
       { ...payload, slug: slugName },
@@ -88,4 +84,16 @@ export class ProductsService {
   remove(id: number) {
     return this.productsRepository.delete({ id });
   }
+}
+
+export function createSlug(text: string): string {
+  return text
+    .toString()
+    .normalize('NFD') // split accented characters
+    .replace(/[\u0300-\u036f]/g, '') // remove accents
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '') // remove invalid chars
+    .replace(/\s+/g, '-') // replace spaces with -
+    .replace(/-+/g, '-'); // remove multiple -
 }

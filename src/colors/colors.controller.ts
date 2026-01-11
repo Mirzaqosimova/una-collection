@@ -29,6 +29,11 @@ export class ColorsController {
     return this.colorsService.findAll(query);
   }
 
+  @Get('filter')
+  findAllFilter(@Query() query: ColorsFilter) {
+    return this.colorsService.findAllFilter(query);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.colorsService.findOne(id);

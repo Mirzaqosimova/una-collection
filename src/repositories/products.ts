@@ -1,6 +1,8 @@
 import { Knex } from 'knex';
 import { InjectKnex } from 'nestjs-knex';
+import { getResult } from 'src/common/dto/find-all-response';
 import { CreateProductDto } from 'src/products/dto/create-products.dto';
+import { ProductsFilter } from 'src/products/dto/query.dto';
 
 export class ProductsRepository {
   constructor(@InjectKnex() private readonly knex: Knex) {}
@@ -20,6 +22,40 @@ export class ProductsRepository {
       .then((res) => res[0]);
   }
 
+  async findAll(query: ProductsFilter) {
+    const { page, q, lang } = query;
+    const bQuery = this.getBuilder()
+      .select(
+        'products.*',
+        'categories.name_uz as category_name_uz',
+        'categories.name_ru as category_name_ru',
+        'categories.name_en as category_name_en',
+        this.knex.raw(`count(product_options.id) as options_count`),
+      )
+      .leftJoin('categories', 'products.category_id', 'categories.id')
+      .leftJoin('product_options', 'products.id', 'product_options.product_id')
+      .orderBy('products.id', 'desc')
+      .groupBy('products.id', 'categories.id');
+
+    if (q) {
+      bQuery.whereILike(`name_${lang}`, `%${q}%`);
+    }
+
+    const [totalCount] = await bQuery
+      .clone()
+      .clearSelect()
+      .clearOrder()
+      .count('products.id');
+
+    bQuery.offset(page.offset).limit(page.limit);
+
+    return getResult(
+      await bQuery,
+      Number(totalCount.count),
+      Number(totalCount.count) > page.offset + page.limit,
+    );
+  }
+
   findUserSide() {
     return this.getBuilder()
       .select(
@@ -37,7 +73,6 @@ export class ProductsRepository {
     order by product_options.created_at
     limit 1 ) as product_options on true`,
       )
-
       .where({ 'product_options.is_sold': false });
   }
 

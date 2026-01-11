@@ -7,18 +7,27 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { Public } from 'src/common/decorators/is-public.decorator';
 import { CreateProductDto } from './dto/create-products.dto';
 import { ProductsService } from './products.service';
+import { ProductsFilter } from './dto/query.dto';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @Public()
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
+  }
+
+  @Public()
+  @Get()
+  findAll(@Query() query: ProductsFilter) {
+    return this.productsService.findAll(query);
   }
 
   @Public()

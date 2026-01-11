@@ -55,4 +55,13 @@ export class CategoriesRepository {
   delete(param: { id: number }) {
     return this.getBuilder().where(param).delete();
   }
+
+  findAllFilter({ product_type }: CategoriesFilter) {
+    const bQuery = this.getBuilder().select('*').orderBy('id', 'desc');
+
+    if (product_type) {
+      bQuery.where('product_type', product_type);
+    }
+    return bQuery;
+  }
 }

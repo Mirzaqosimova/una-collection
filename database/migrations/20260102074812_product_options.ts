@@ -19,7 +19,6 @@ export async function up(knex: Knex): Promise<void> {
       .references('id')
       .inTable('colors')
       .nullable();
-
     table
       .integer('measurement_id')
       .references('id')
@@ -27,6 +26,7 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable();
     table.string('article');
     table.integer('quantity').nullable();
+    table.float('price').notNullable();
     table.boolean('is_sold').notNullable().defaultTo(false);
     table.dateTime('created_at').defaultTo(knex.fn.now());
   });

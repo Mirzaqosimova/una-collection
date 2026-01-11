@@ -1,6 +1,6 @@
 import { IsInt } from '@nestjs/class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateProductOptionDto {
   @ApiProperty({ type: [String] })
@@ -13,10 +13,12 @@ export class CreateProductOptionDto {
 
   @ApiProperty()
   @IsInt()
+  @IsOptional()
   decor_color_id: number;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   article: string;
 
   @ApiProperty()
@@ -25,9 +27,15 @@ export class CreateProductOptionDto {
 
   @ApiProperty()
   @IsInt()
+  @IsOptional()
   quantity: number;
 
   @ApiProperty()
   @IsInt()
   product_id: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  price: number;
 }

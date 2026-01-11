@@ -29,6 +29,11 @@ export class MeasurementsController {
     return this.measurementsService.findAll(query);
   }
 
+  @Get('filter')
+  findAllFilter(@Query() query: MeasurementsFilter) {
+    return this.measurementsService.findAllFilter(query);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.measurementsService.findOne(id);

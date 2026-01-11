@@ -78,4 +78,8 @@ export class ColorsService {
     }
     return this.colorsRepository.delete({ id });
   }
+
+  findAllFilter(query: ColorsFilter) {
+    return this.colorsRepository.findAllFilter(query);
+  }
 }

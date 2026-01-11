@@ -59,4 +59,12 @@ export class ColorsRepository {
   delete(param: { id: number }) {
     return this.getBuilder().where(param).delete();
   }
+
+  findAllFilter({ type }: ColorsFilter) {
+    const bQuery = this.getBuilder().select('*').orderBy('id', 'desc');
+    if (type) {
+      bQuery.where('type', type);
+    }
+    return bQuery;
+  }
 }

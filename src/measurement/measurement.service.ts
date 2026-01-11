@@ -66,4 +66,8 @@ export class MeasurementsService {
     }
     return this.measurementsRepository.delete({ id });
   }
+
+  findAllFilter(query: MeasurementsFilter) {
+    return this.measurementsRepository.findAllFilter(query);
+  }
 }

@@ -25,16 +25,18 @@ export const corsOptions = {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // app.use(
+  //   cors({
+  //     origin: '*',
+  //     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  //     allowedHeaders: '*',
+  //   }),
+  // );
   app.use(
     cors({
-      origin: [
-        'http://localhost:3000',
-        'http://localhost:5173',
-        'https://una-admin.netlify.app',
-        'https://319daeb9b333.ngrok-free.app',
-      ],
-      methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      origin: (origin, callback) => {
+        callback(null, true); // allow all origins
+      },
       credentials: true,
     }),
   );

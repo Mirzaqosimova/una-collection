@@ -1,0 +1,17 @@
+name: una
+services:
+  postgres:
+    env_file: .env
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-postgres}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - '127.0.0.1:5432:5432'
+
+volumes:
+  postgres:

@@ -10,6 +10,9 @@ import { CategoriesFilter } from './dto/query.dto';
 
 @Injectable()
 export class CategoriesService {
+  findAllFilter(query: CategoriesFilter) {
+    return this.categoriesRepository.findAllFilter(query);
+  }
   constructor(
     private readonly categoriesRepository: CategoriesRepository,
     private readonly productsOptionsRepository: ProductOptionsRepository,

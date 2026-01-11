@@ -12,6 +12,7 @@ import {
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { CategoriesFilter } from './dto/query.dto';
+import { Public } from 'src/common/decorators/is-public.decorator';
 
 @Controller('categories')
 export class CategoriesController {
@@ -24,6 +25,17 @@ export class CategoriesController {
 
   @Get()
   findAll(@Query() query: CategoriesFilter) {
+    return this.categoriesService.findAll(query);
+  }
+
+  @Get('filter')
+  findAllFilter(@Query() query: CategoriesFilter) {
+    return this.categoriesService.findAllFilter(query);
+  }
+
+  @Public()
+  @Get('user-side')
+  findAllUser(@Query() query: CategoriesFilter) {
     return this.categoriesService.findAll(query);
   }
 
