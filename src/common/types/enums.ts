@@ -27,3 +27,8 @@ export enum PaymentType {
   CONTACT = 'contact',
   TERMINAL = 'terminal',
 }
+
+export enum PatternType {
+  COLOR = 'color',
+  PATTERN = 'pattern',
+}

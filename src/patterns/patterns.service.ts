@@ -3,21 +3,20 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateColorDto } from './dto/create-color.dto';
-import { ColorsRepository } from 'src/repositories/colors';
-import { ColorsFilter } from './dto/query.dto';
+import { CreatePatternDto } from './dto/create-pattern.dto';
+import { PatternsRepository } from 'src/repositories/patterns';
 import { ProductOptionsRepository } from 'src/repositories/product_options';
-import { ColorType } from 'src/common/types/enums';
+import { PatternFilter } from './dto/query.dto';
 
 @Injectable()
-export class ColorsService {
+export class PatternsService {
   constructor(
-    private readonly colorsRepository: ColorsRepository,
+    private readonly patternRepository: PatternsRepository,
     private readonly productsOptionsRepository: ProductOptionsRepository,
   ) {}
-  async create(createColorDto: CreateColorDto) {
-    const hasCode = await this.colorsRepository.findBy({
-      code: createColorDto.code,
+  async create(createColorDto: CreatePatternDto) {
+    const hasCode = await this.patternRepository.findBy({
+      name_uz: createColorDto.name_uz,
     });
     createColorDto.name_uz = createColorDto.name_uz
       .trim()
@@ -26,20 +25,20 @@ export class ColorsService {
     if (hasCode) {
       throw new ConflictException('Color already exists');
     }
-    return this.colorsRepository.create(createColorDto);
+    return this.patternRepository.create(createColorDto);
   }
 
-  findAll(query: ColorsFilter) {
-    return this.colorsRepository.find(query);
+  findAll(query: PatternFilter) {
+    return this.patternRepository.find(query);
   }
 
   findOne(id: number) {
-    return this.colorsRepository.findBy({ id });
+    return this.patternRepository.findBy({ id });
   }
 
-  async update(id: number, updateColorDto: CreateColorDto) {
-    const hasCode = await this.colorsRepository.findBy({
-      code: updateColorDto.code,
+  async update(id: number, updateColorDto: CreatePatternDto) {
+    const hasCode = await this.patternRepository.findBy({
+      name_uz: updateColorDto.name_uz,
     });
 
     if (hasCode && hasCode.id !== id) {
@@ -50,27 +49,28 @@ export class ColorsService {
       .trim()
       .replace(/\s+/g, ' ')
       .replace(/['‘’`]/g, "'");
-    return this.colorsRepository.update({ id }, updateColorDto);
+    return this.patternRepository.update({ id }, updateColorDto);
   }
 
   async remove(id: number) {
-    const hasColor = await this.colorsRepository.findBy({
+    const hasColor = await this.patternRepository.findBy({
       id,
     });
     if (!hasColor) {
       throw new NotFoundException('Color not found');
     }
+
     const hasProduct = await this.productsOptionsRepository.findBy({
-      main_color_id: id,
+      pattern_id: id,
     });
 
     if (hasProduct) {
       throw new ConflictException('Color has products');
     }
-    return this.colorsRepository.delete({ id });
+    return this.patternRepository.delete({ id });
   }
 
-  findAllFilter(query: ColorsFilter) {
-    return this.colorsRepository.findAllFilter(query);
+  findAllFilter(query: PatternFilter) {
+    return this.patternRepository.findAllFilter(query);
   }
 }

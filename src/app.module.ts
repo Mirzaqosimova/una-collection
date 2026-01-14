@@ -12,6 +12,7 @@ import { cwd } from 'process';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule } from '@nestjs/config';
 import { CategoriesModule } from './categories/categories.module';
+import { PatternsModule } from './patterns/patterns.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CategoriesModule } from './categories/categories.module';
     OrdersModule,
     MediaFilesModule,
     CategoriesModule,
+    PatternsModule,
   ],
 })
 export class AppModule {}

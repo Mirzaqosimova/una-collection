@@ -12,7 +12,7 @@ export class ProductOptionsService {
     const hasDuplicateProduct = await this.productOptionsRepository.findBy({
       product_id: payload.product_id,
       main_color_id: payload.main_color_id,
-      decor_color_id: payload.decor_color_id,
+      pattern_id: payload.pattern_id,
     });
 
     if (hasDuplicateProduct) {
@@ -34,7 +34,7 @@ export class ProductOptionsService {
     const hasDuplicateProduct = await this.productOptionsRepository.findBy({
       product_id: updateProductOptionDto.product_id,
       main_color_id: updateProductOptionDto.main_color_id,
-      decor_color_id: updateProductOptionDto.decor_color_id,
+      pattern_id: updateProductOptionDto.pattern_id,
     });
 
     if (hasDuplicateProduct) {

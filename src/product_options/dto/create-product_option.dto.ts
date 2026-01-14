@@ -14,7 +14,7 @@ export class CreateProductOptionDto {
   @ApiProperty()
   @IsInt()
   @IsOptional()
-  decor_color_id: number;
+  pattern_id: number;
 
   @ApiProperty()
   @IsString()

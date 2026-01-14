@@ -14,7 +14,7 @@ export class ProductOptionsRepository {
     product_id?: number;
     main_color_id?: number;
     measurement_id?: number;
-    decor_color_id?: number;
+    pattern_id?: number;
   }) {
     return this.getBuilder().where(param).first();
   }
@@ -27,17 +27,18 @@ export class ProductOptionsRepository {
         this.knex.raw(`
           jsonb_agg(
             jsonb_build_object(
-              'id', product_options.decor_color_id,
-              'name_uz', colors.name_uz,
-              'name_ru', colors.name_ru,
-              'name_en', colors.name_en,
-              'code', colors.code,
+              'id', product_options.pattern_id,
+              'name_uz', patterns.name_uz,
+              'name_ru', patterns.name_ru,
+              'name_en', patterns.name_en,
+              'type', patterns.type,
+              'image', patterns.image,
               'product_id', product_options.id
             )
-          ) AS decor_colors
+          ) AS patterns
         `),
       )
-      .innerJoin('colors', 'colors.id', 'product_options.decor_color_id')
+      .innerJoin('patterns', 'patterns.id', 'product_options.pattern_id')
       .where('product_options.product_id', param.product_id)
       .andWhere('product_options.is_sold', false)
       .groupBy(
@@ -60,7 +61,7 @@ export class ProductOptionsRepository {
               'measurement_name_uz', measurements.name_uz,
               'measurement_name_en', measurements.name_en,
               'measurement_name_ru', measurements.name_ru,
-              'decor_color', t.decor_colors
+              'patterns', t.patterns
             )
           ) AS size
         `),
@@ -93,11 +94,7 @@ export class ProductOptionsRepository {
         'main_color.id',
         'product_options.main_color_id',
       )
-      .leftJoin(
-        'colors as decor_color',
-        'decor_color.id',
-        'product_options.decor_color_id',
-      )
+      .leftJoin('patterns', 'patterns.id', 'product_options.pattern_id')
       .leftJoin(
         'measurements',
         'measurements.id',
@@ -110,15 +107,15 @@ export class ProductOptionsRepository {
         'product_options.product_id',
         'product_options.main_color_id',
         'product_options.measurement_id',
-        'product_options.decor_color_id',
+        'product_options.pattern_id',
         'main_color.name_uz as main_color_name_uz',
         'main_color.name_ru as main_color_name_ru',
         'main_color.name_en as main_color_name_en',
         'main_color.code as main_color_code',
-        'decor_color.name_uz as decor_color_name_uz',
-        'decor_color.name_ru as decor_color_name_ru',
-        'decor_color.name_en as decor_color_name_en',
-        'decor_color.code as decor_color_code',
+        'patterns.name_uz as pattern_name_uz',
+        'patterns.name_ru as pattern_name_ru',
+        'patterns.name_en as pattern_name_en',
+        'patterns.image as pattern_image',
         'measurements.name_uz as measurement_name_uz',
         'measurements.name_ru as measurement_name_ru',
         'measurements.name_en as measurement_name_en',

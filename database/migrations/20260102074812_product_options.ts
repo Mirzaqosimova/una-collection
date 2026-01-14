@@ -14,11 +14,7 @@ export async function up(knex: Knex): Promise<void> {
       .references('id')
       .inTable('colors')
       .notNullable();
-    table
-      .integer('decor_color_id')
-      .references('id')
-      .inTable('colors')
-      .nullable();
+    table.integer('pattern_id').references('id').inTable('patterns').nullable();
     table
       .integer('measurement_id')
       .references('id')
