@@ -1,6 +1,5 @@
-import { Optional } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { PatternType } from 'src/common/types/enums';
 
 export class CreatePatternDto {
@@ -20,13 +19,13 @@ export class CreatePatternDto {
   @IsEnum(PatternType)
   type: PatternType;
 
-  @ApiProperty()
-  @Optional()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
-  color: string;
+  color?: string;
 
   @ApiProperty()
-  @Optional()
+  @IsOptional()
   @IsString()
   image: string;
 }

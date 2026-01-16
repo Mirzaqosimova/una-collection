@@ -13,6 +13,7 @@ import { PatternsService } from './patterns.service';
 import { CreatePatternDto } from './dto/create-pattern.dto';
 import { PatternFilter } from './dto/query.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/common/decorators/is-public.decorator';
 
 @ApiTags('Patterns')
 @ApiBearerAuth()
@@ -20,6 +21,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class PatternsController {
   constructor(private readonly patternsService: PatternsService) {}
 
+  @Public()
   @Post()
   create(@Body() createPatternDto: CreatePatternDto) {
     return this.patternsService.create(createPatternDto);

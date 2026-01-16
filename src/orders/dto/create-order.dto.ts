@@ -20,7 +20,7 @@ export class CreateOrderOptionsDto {
 
   @ApiProperty()
   @IsInt()
-  @Optional()
+  @IsOptional()
   quantity: number;
 }
 
