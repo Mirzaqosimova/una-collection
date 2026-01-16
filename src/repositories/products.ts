@@ -51,8 +51,8 @@ export class ProductsRepository {
 
     return getResult(
       await bQuery,
-      Number(totalCount.count),
-      Number(totalCount.count) > page.offset + page.limit,
+      Number(totalCount?.count || 0),
+      Number(totalCount?.count || 0) > page.offset + page.limit,
     );
   }
 

@@ -21,7 +21,6 @@ import { Public } from 'src/common/decorators/is-public.decorator';
 export class PatternsController {
   constructor(private readonly patternsService: PatternsService) {}
 
-  @Public()
   @Post()
   create(@Body() createPatternDto: CreatePatternDto) {
     return this.patternsService.create(createPatternDto);

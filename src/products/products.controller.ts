@@ -24,7 +24,6 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
-  @Public()
   @Get()
   findAll(@Query() query: ProductsFilter) {
     return this.productsService.findAll(query);
