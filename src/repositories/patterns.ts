@@ -57,11 +57,7 @@ export class PatternsRepository {
     return this.getBuilder().where(param).delete();
   }
 
-  findAllFilter({ type }: PatternFilter) {
-    const bQuery = this.getBuilder().select('*').orderBy('id', 'desc');
-    if (type) {
-      bQuery.where('type', type);
-    }
-    return bQuery;
+  findAllFilter() {
+    return this.getBuilder().select('*').orderBy('id', 'desc');
   }
 }

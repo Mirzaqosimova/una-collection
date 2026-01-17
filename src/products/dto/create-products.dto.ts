@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ProductType } from 'src/common/types/enums';
 
 export class CreateProductDto {
@@ -33,6 +33,7 @@ export class CreateProductDto {
 
   @ApiProperty()
   @IsNumber()
+  @IsOptional()
   price: number;
 
   @ApiProperty({ enum: ProductType })

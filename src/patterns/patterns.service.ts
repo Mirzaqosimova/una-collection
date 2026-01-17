@@ -70,7 +70,7 @@ export class PatternsService {
     return this.patternRepository.delete({ id });
   }
 
-  findAllFilter(query: PatternFilter) {
-    return this.patternRepository.findAllFilter(query);
+  findAllFilter() {
+    return this.patternRepository.findAllFilter();
   }
 }

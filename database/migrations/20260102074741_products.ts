@@ -16,7 +16,7 @@ export async function up(knex: Knex): Promise<void> {
     table.text('description_uz').notNullable();
     table.text('description_ru').notNullable();
     table.text('description_en').notNullable();
-    table.float('price').notNullable();
+    table.float('price').nullable();
     table.dateTime('created_at').defaultTo(knex.fn.now());
   });
 }

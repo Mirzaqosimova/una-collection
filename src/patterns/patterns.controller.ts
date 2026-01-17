@@ -31,15 +31,16 @@ export class PatternsController {
     return this.patternsService.findAll(query);
   }
 
+  @Get('filter')
+  findAllFilter() {
+    return this.patternsService.findAllFilter();
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.patternsService.findOne(+id);
   }
 
-  @Get('filter')
-  findAllFilter(@Query() query: PatternFilter) {
-    return this.patternsService.findAllFilter(query);
-  }
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
