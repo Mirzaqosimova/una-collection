@@ -7,7 +7,6 @@ import { CreateColorDto } from './dto/create-color.dto';
 import { ColorsRepository } from 'src/repositories/colors';
 import { ColorsFilter } from './dto/query.dto';
 import { ProductOptionsRepository } from 'src/repositories/product_options';
-import { ColorType } from 'src/common/types/enums';
 
 @Injectable()
 export class ColorsService {
@@ -15,6 +14,7 @@ export class ColorsService {
     private readonly colorsRepository: ColorsRepository,
     private readonly productsOptionsRepository: ProductOptionsRepository,
   ) {}
+
   async create(createColorDto: CreateColorDto) {
     const hasCode = await this.colorsRepository.findBy({
       code: createColorDto.code,

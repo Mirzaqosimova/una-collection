@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsString } from 'class-validator';
-import { ColorType } from 'src/common/types/enums';
 
 export class CreateColorDto {
   @ApiProperty()
@@ -22,8 +21,4 @@ export class CreateColorDto {
   @ApiProperty()
   @IsString()
   color: string;
-
-  @ApiProperty({ enum: ColorType })
-  @IsEnum(ColorType)
-  type: ColorType;
 }

@@ -3,11 +3,6 @@ export enum ProductType {
   PASTELS = 'pastels',
 }
 
-export enum ColorType {
-  MAIN = 'main',
-  DECOR = 'decor',
-}
-
 export enum MediaFileAssociations {
   PRODUCTS = 'products',
 }
