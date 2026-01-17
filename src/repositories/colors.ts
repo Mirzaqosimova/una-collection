@@ -21,12 +21,9 @@ export class ColorsRepository {
   }
 
   async find(query: ColorsFilter) {
-    const { type, page, q, lang } = query;
+    const { page, q, lang } = query;
     const bQuery = this.getBuilder().select('*').orderBy('id', 'desc');
 
-    if (type) {
-      bQuery.where('type', type);
-    }
     if (q) {
       bQuery.where((builder) =>
         builder
@@ -60,11 +57,7 @@ export class ColorsRepository {
     return this.getBuilder().where(param).delete();
   }
 
-  findAllFilter({ type }: ColorsFilter) {
-    const bQuery = this.getBuilder().select('*').orderBy('id', 'desc');
-    if (type) {
-      bQuery.where('type', type);
-    }
-    return bQuery;
+  findAllFilter() {
+    return this.getBuilder().select('*').orderBy('id', 'desc');
   }
 }

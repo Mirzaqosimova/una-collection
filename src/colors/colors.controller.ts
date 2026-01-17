@@ -30,8 +30,8 @@ export class ColorsController {
   }
 
   @Get('filter')
-  findAllFilter(@Query() query: ColorsFilter) {
-    return this.colorsService.findAllFilter(query);
+  findAllFilter() {
+    return this.colorsService.findAllFilter();
   }
 
   @Get(':id')
