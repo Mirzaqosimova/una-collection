@@ -1,19 +1,47 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateProductOptionDto } from './dto/create-product_option.dto';
 import { ProductOptionsRepository } from 'src/repositories/product_options';
-import { ProductOptionsFilter } from './dto/query.dto';
+import {
+  ProductOptionsExistsFilter,
+  ProductOptionsFilter,
+} from './dto/query.dto';
+import { ProductsRepository } from 'src/repositories/products';
+import { ProductType } from 'src/common/types/enums';
+import { OrdersRepository } from 'src/repositories/orders';
 
 @Injectable()
 export class ProductOptionsService {
   constructor(
     private readonly productOptionsRepository: ProductOptionsRepository,
+    private readonly productsRepository: ProductsRepository,
+    private readonly ordersRepository: OrdersRepository,
   ) {}
+
   async create(payload: CreateProductOptionDto) {
-    const hasDuplicateProduct = await this.productOptionsRepository.findBy({
+    const hasProduct = await this.productsRepository.findBy({
+      id: payload.product_id,
+    });
+
+    if (!hasProduct) {
+      throw new NotFoundException('Product not found');
+    }
+    const validation = {
       product_id: payload.product_id,
       main_color_id: payload.main_color_id,
-      pattern_id: payload.pattern_id,
-    });
+    };
+
+    if (hasProduct.type === ProductType.CLOTHES) {
+      validation['pattern_id'] = payload.pattern_id;
+    } else {
+      validation['measurement_id'] = payload.measurement_id;
+    }
+
+    const hasDuplicateProduct =
+      await this.productOptionsRepository.findBy(validation);
 
     if (hasDuplicateProduct) {
       throw new ConflictException('Duplicate product options');
@@ -30,21 +58,59 @@ export class ProductOptionsService {
     return this.productOptionsRepository.findBy({ id });
   }
 
-  async update(id: number, updateProductOptionDto: CreateProductOptionDto) {
-    const hasDuplicateProduct = await this.productOptionsRepository.findBy({
-      product_id: updateProductOptionDto.product_id,
-      main_color_id: updateProductOptionDto.main_color_id,
-      pattern_id: updateProductOptionDto.pattern_id,
+  async update(id: number, payload: CreateProductOptionDto) {
+    const hasProduct = await this.productsRepository.findBy({
+      id: payload.product_id,
     });
+
+    if (!hasProduct) {
+      throw new NotFoundException('Product not found');
+    }
+    const validation = {
+      product_id: payload.product_id,
+      main_color_id: payload.main_color_id,
+    };
+
+    if (hasProduct.type === ProductType.CLOTHES) {
+      validation['pattern_id'] = payload.pattern_id;
+    } else {
+      validation['measurement_id'] = payload.measurement_id;
+    }
+
+    const hasDuplicateProduct =
+      await this.productOptionsRepository.findBy(validation);
 
     if (hasDuplicateProduct) {
       throw new ConflictException('Duplicate product options');
     }
 
-    return this.productOptionsRepository.update({ id }, updateProductOptionDto);
+    return this.productOptionsRepository.update({ id }, payload);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} productOption`;
+  async remove(id: number) {
+    const hasOrder = await this.ordersRepository.findBy({
+      product_option_id: id,
+    });
+
+    if (hasOrder) {
+      throw new ConflictException('Product has orders');
+    }
+    return this.productOptionsRepository.remove({ id });
+  }
+
+  async checkExists(query: ProductOptionsExistsFilter) {
+    const filter = {
+      product_id: query.product_id,
+      main_color_id: query.main_color_id,
+    };
+
+    if (query.pattern_id) {
+      filter['pattern_id'] = query.pattern_id;
+    }
+    if (query.measurement_id) {
+    }
+    const hasDuplicateProduct =
+      await this.productOptionsRepository.findBy(filter);
+    return !!hasDuplicateProduct;
   }
 }

@@ -10,8 +10,12 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { CreateProductOptionDto } from './dto/create-product_option.dto';
-import { ProductOptionsFilter } from './dto/query.dto';
+import {
+  ProductOptionsExistsFilter,
+  ProductOptionsFilter,
+} from './dto/query.dto';
 import { ProductOptionsService } from './product_options.service';
+import { Public } from 'src/common/decorators/is-public.decorator';
 
 @Controller('product-options')
 export class ProductOptionsController {
@@ -25,6 +29,12 @@ export class ProductOptionsController {
   @Get()
   findAll(@Query() query: ProductOptionsFilter) {
     return this.productOptionsService.findAll(query);
+  }
+
+  @Public()
+  @Get('/check-exists')
+  checkExists(@Query() query: ProductOptionsExistsFilter) {
+    return this.productOptionsService.checkExists(query);
   }
 
   @Get(':id')

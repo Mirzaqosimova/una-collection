@@ -34,12 +34,12 @@ export class ProductsService {
     return this.productsRepository.findAll(query);
   }
 
-  findUserSide() {
-    return this.productsRepository.findUserSide();
+  findUserSide(query: ProductsFilter) {
+    return this.productsRepository.findUserSide(query);
   }
 
   async findOneUserSide(id: number) {
-    const hasProduct = await this.productsRepository.findBy({ id });
+    const hasProduct = await this.productsRepository.findByUserSide({ id });
 
     if (!hasProduct) {
       throw new ConflictException('product not found');

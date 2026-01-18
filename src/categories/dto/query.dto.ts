@@ -7,5 +7,5 @@ export class CategoriesFilter extends BaseFilter {
   @ApiProperty({ required: false, enum: ProductType })
   @IsString()
   @IsOptional()
-  product_type: ProductType;
+  product_type?: ProductType;
 }

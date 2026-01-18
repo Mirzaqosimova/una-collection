@@ -56,15 +56,17 @@ export class ProductsRepository {
     );
   }
 
-  findUserSide() {
-    return this.getBuilder()
+  async findUserSide(query: ProductsFilter) {
+    const { page, q, lang, category_id } = query;
+    const bQuery = this.getBuilder()
       .select(
         'products.id',
         'products.name_uz',
         'products.name_ru',
         'products.name_en',
-        'products.price',
-        this.knex.raw(`product_options.photos[0]`),
+        'products.category_id',
+        this.knex.raw(`product_options.photos,
+          case when products.type = 'pastels' then product_options.price else products.price end as price`),
       )
       .joinRaw(
         `left join lateral(
@@ -74,6 +76,27 @@ export class ProductsRepository {
     limit 1 ) as product_options on true`,
       )
       .where({ 'product_options.is_sold': false });
+
+    if (category_id) {
+      bQuery.where({ 'products.category_id': category_id });
+    }
+    if (q) {
+      bQuery.whereILike(`name_${lang}`, `%${q}%`);
+    }
+
+    const [totalCount] = await bQuery
+      .clone()
+      .clearSelect()
+      .clearOrder()
+      .count('products.id');
+
+    bQuery.offset(page.offset).limit(page.limit);
+
+    return getResult(
+      await bQuery,
+      Number(totalCount?.count || 0),
+      Number(totalCount?.count || 0) > page.offset + page.limit,
+    );
   }
 
   update(param: { id: number }, payload: CreateProductDto) {
@@ -82,6 +105,19 @@ export class ProductsRepository {
       .update(payload)
       .returning('id')
       .then((res) => res[0]);
+  }
+
+  findByUserSide(param: { id: number }) {
+    return this.getBuilder()
+      .select(
+        'products.*',
+        'categories.name_uz as category_name_uz',
+        'categories.name_ru as category_name_ru',
+        'categories.name_en as category_name_en',
+      )
+      .leftJoin('categories', { 'categories.id': 'products.category_id' })
+      .where('products.id', param.id)
+      .first();
   }
 
   delete(param: { id: number }) {

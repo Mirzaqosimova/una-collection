@@ -31,8 +31,8 @@ export class ProductsController {
 
   @Public()
   @Get('/user-side')
-  findUserSide() {
-    return this.productsService.findUserSide();
+  findUserSide(@Query() query: ProductsFilter) {
+    return this.productsService.findUserSide(query);
   }
 
   @Public()

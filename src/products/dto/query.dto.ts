@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsNumberString, IsOptional, IsString } from 'class-validator';
 import { BaseFilter } from 'src/common/dto/base-filter';
 import { ProductType } from 'src/common/types/enums';
 
-export class ProductsFilter extends BaseFilter {}
+export class ProductsFilter extends BaseFilter {
+  @ApiProperty({ required: false })
+  @IsNumberString()
+  @IsOptional()
+  category_id: number;
+}

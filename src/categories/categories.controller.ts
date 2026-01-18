@@ -35,8 +35,8 @@ export class CategoriesController {
 
   @Public()
   @Get('user-side')
-  findAllUser(@Query() query: CategoriesFilter) {
-    return this.categoriesService.findAll(query);
+  findAllUser() {
+    return this.categoriesService.findAllUserSide();
   }
 
   @Get(':id')

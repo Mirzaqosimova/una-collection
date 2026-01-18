@@ -39,6 +39,10 @@ export class CategoriesService {
     return this.categoriesRepository.find(query);
   }
 
+  findAllUserSide() {
+    return this.categoriesRepository.findAllFilter({});
+  }
+
   findOne(id: number) {
     return this.categoriesRepository.findBy({ id });
   }

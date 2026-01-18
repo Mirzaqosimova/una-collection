@@ -33,6 +33,7 @@ export class ProductOptionsRepository {
               'name_en', patterns.name_en,
               'type', patterns.type,
               'image', patterns.image,
+              'color', patterns.color,
               'product_id', product_options.id
             )
           ) AS patterns
@@ -54,6 +55,7 @@ export class ProductOptionsRepository {
         'main_color.name_ru as main_color_name_ru',
         'main_color.name_en as main_color_name_en',
         'main_color.code',
+        'main_color.color',
         this.knex.raw(`
           jsonb_agg(
             jsonb_build_object(
@@ -69,14 +71,7 @@ export class ProductOptionsRepository {
       .from(subquery)
       .innerJoin({ main_color: 'colors' }, 'main_color.id', 't.main_color_id')
       .innerJoin('measurements', 'measurements.id', 't.measurement_id')
-      .groupBy(
-        't.main_color_id',
-        'main_color.id',
-        'main_color.name_uz',
-        'main_color.name_ru',
-        'main_color.name_en',
-        'main_color.code',
-      );
+      .groupBy('t.main_color_id', 'main_color.id');
     return query;
   }
 
@@ -109,6 +104,7 @@ export class ProductOptionsRepository {
         'product_options.measurement_id',
         'product_options.pattern_id',
         'product_options.price',
+        'product_options.quantity',
         'main_color.name_uz as main_color_name_uz',
         'main_color.name_ru as main_color_name_ru',
         'main_color.name_en as main_color_name_en',
@@ -136,6 +132,14 @@ export class ProductOptionsRepository {
     return this.getBuilder()
       .where(param)
       .update(payload)
+      .returning('*')
+      .then((res) => res[0]);
+  }
+
+  remove(param: { id: number }) {
+    return this.getBuilder()
+      .where(param)
+      .delete()
       .returning('*')
       .then((res) => res[0]);
   }

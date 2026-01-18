@@ -8,7 +8,7 @@ export class OrdersRepository {
     return trx ? trx('orders') : this.knex('orders');
   }
 
-  findBy(param: { id?: number }) {
+  findBy(param: { id?: number; product_option_id?: number }) {
     return this.getBuilder().where(param).first();
   }
 }
