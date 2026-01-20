@@ -28,6 +28,7 @@ export class ProductOptionsRepository {
           jsonb_agg(
             jsonb_build_object(
               'id', product_options.pattern_id,
+              'photo', product_options.photos,
               'name_uz', patterns.name_uz,
               'name_ru', patterns.name_ru,
               'name_en', patterns.name_en,
