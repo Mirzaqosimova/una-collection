@@ -22,7 +22,11 @@ export class OrdersRepository {
   create({ products, ...orderData }: CreateOrderDto) {
     return this.knex.transaction(async (trx) => {
       const [order] = await trx('orders')
-        .insert({ status: OrderStatus.NEW, ...orderData })
+        .insert({
+          status: OrderStatus.NEW,
+          ...orderData,
+          total_price: products.reduce((sum, i) => sum + i.price, 0),
+        })
         .returning('*');
 
       const options = products.map((p) => ({

@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { PaymentType } from 'src/common/types/enums';
+import { DeliveryType, PaymentType } from 'src/common/types/enums';
 
 export class CreateOrderProductDto {
   @ApiProperty()
@@ -39,12 +39,8 @@ export class CreateOrderDto {
   full_name: string;
 
   @ApiProperty()
-  @IsString()
-  delivery_type: string;
-
-  @ApiProperty()
-  @IsNumber()
-  total_price: number;
+  @IsEnum(DeliveryType)
+  delivery_type: DeliveryType;
 
   @ApiProperty({ required: false })
   @IsOptional()
@@ -65,7 +61,6 @@ export class CreateOrderDto {
   @IsEnum(PaymentType)
   payment_type: PaymentType;
 
-  // 👇 IMPORTANT PART
   @ApiProperty({
     type: () => [CreateOrderProductDto],
   })

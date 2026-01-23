@@ -163,6 +163,7 @@ export class ProductOptionsRepository {
           'measurement_name_uz', measurements.name_uz,
           'measurement_name_en', measurements.name_en,
           'measurement_name_ru', measurements.name_ru,
+          'price', product_options.price,
           'id', product_options.id,
           'product_id', product_options.product_id,
           'photo', product_options.photos

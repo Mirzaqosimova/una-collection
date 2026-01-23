@@ -19,8 +19,13 @@ export enum LangEnum {
 
 export enum PaymentType {
   CLICK = 'click',
-  CONTACT = 'contact',
   TERMINAL = 'terminal',
+}
+
+export enum DeliveryType {
+  ONE_TWO_HOUR = 'one_two_hour',
+  ONE_DAY = 'one_day',
+  THREE_DAY = 'three_day',
 }
 
 export enum PatternType {
