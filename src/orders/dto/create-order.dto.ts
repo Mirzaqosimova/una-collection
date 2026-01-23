@@ -1,67 +1,76 @@
-import { Optional } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import {
-  ArrayNotEmpty,
-  IsArray,
-  IsEnum,
-  IsInt,
+  IsString,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsString,
+  IsEnum,
+  IsPhoneNumber,
   ValidateNested,
+  IsArray,
+  Min,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 import { PaymentType } from 'src/common/types/enums';
 
-export class CreateOrderOptionsDto {
+export class CreateOrderProductDto {
   @ApiProperty()
-  @IsInt()
+  @IsNumber()
   product_option_id: number;
 
-  @ApiProperty()
-  @IsInt()
+  @ApiProperty({ example: 2, required: false })
+  @IsNumber()
   @IsOptional()
+  @Min(1)
   quantity: number;
-}
 
+  @ApiProperty({ example: 25000 })
+  @IsNumber()
+  price: number;
+}
 export class CreateOrderDto {
   @ApiProperty()
-  @IsString()
+  @IsPhoneNumber()
   phone: string;
 
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   full_name: string;
 
   @ApiProperty()
-  @IsInt()
-  delivery_id: number;
+  @IsString()
+  delivery_type: string;
 
   @ApiProperty()
-  @IsInt()
+  @IsNumber()
   total_price: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsString()
-  address: string;
+  address?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsNumber()
-  longitude: number;
+  longitude?: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsNumber()
-  latitude: number;
+  latitude?: number;
 
   @ApiProperty({ enum: PaymentType })
   @IsEnum(PaymentType)
   payment_type: PaymentType;
 
-  @ApiProperty({ type: [CreateOrderOptionsDto] })
-  @ArrayNotEmpty()
-  @IsOptional()
+  // 👇 IMPORTANT PART
+  @ApiProperty({
+    type: () => [CreateOrderProductDto],
+  })
   @IsArray()
-  @Type(() => CreateOrderOptionsDto)
   @ValidateNested({ each: true })
-  options: CreateOrderOptionsDto[];
+  @Type(() => CreateOrderProductDto)
+  products: CreateOrderProductDto[];
 }

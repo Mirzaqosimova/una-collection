@@ -12,13 +12,14 @@ import {
 import { ProductsRepository } from 'src/repositories/products';
 import { ProductType } from 'src/common/types/enums';
 import { OrdersRepository } from 'src/repositories/orders';
+import { OrderOptionsRepository } from 'src/repositories/order_options';
 
 @Injectable()
 export class ProductOptionsService {
   constructor(
     private readonly productOptionsRepository: ProductOptionsRepository,
     private readonly productsRepository: ProductsRepository,
-    private readonly ordersRepository: OrdersRepository,
+    private readonly orderOptionsRepository: OrderOptionsRepository,
   ) {}
 
   async create(payload: CreateProductOptionDto) {
@@ -88,7 +89,7 @@ export class ProductOptionsService {
   }
 
   async remove(id: number) {
-    const hasOrder = await this.ordersRepository.findBy({
+    const hasOrder = await this.orderOptionsRepository.findWithOrder({
       product_option_id: id,
     });
 

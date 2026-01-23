@@ -9,6 +9,13 @@ export async function up(knex: Knex): Promise<void> {
       .inTable('product_options')
       .notNullable();
     table.integer('quantity');
+    table
+      .integer('order_id')
+      .references('id')
+      .inTable('orders.id')
+      .onDelete('CASCADE')
+      .notNullable();
+    table.integer('quantity');
     table.float('price').notNullable();
     table.dateTime('created_at').defaultTo(knex.fn.now());
   });

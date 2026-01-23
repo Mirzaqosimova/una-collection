@@ -5,16 +5,12 @@ export async function up(knex: Knex): Promise<void> {
     table.increments('id').primary();
     table.string('phone').notNullable();
     table.string('full_name').notNullable();
-    table
-      .integer('delivery_id')
-      .references('id')
-      .inTable('delivery')
-      .notNullable();
+    table.string('delivery_type').notNullable();
     table.float('total_price').notNullable();
     table.string('address');
     table.double('longitude');
     table.double('latitude');
-    table.string('payment_type'); // click | contact_with_me | terminal
+    table.string('payment_type'); // click | yetkazib berish
     table.string('payment_check');
     table.string('status').notNullable(); // new | approved | on_delivery | done | rejected\
     table.dateTime('created_at').defaultTo(knex.fn.now());

@@ -27,3 +27,11 @@ export enum PatternType {
   COLOR = 'color',
   PATTERN = 'pattern',
 }
+
+export enum OrderStatus {
+  NEW = 'new',
+  APPROVED = 'approved',
+  ON_DELIVERY = 'on_delivery',
+  DONE = 'done',
+  REJECTED = 'rejected',
+}

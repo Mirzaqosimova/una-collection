@@ -1,15 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { OrdersRepository } from 'src/repositories/orders';
+import { OrderStatus } from 'src/common/types/enums';
 
 @Injectable()
 export class OrdersService {
-  create(payload: CreateOrderDto) {
-    return 'This action adds a new order';
+  constructor(private readonly ordersRepository: OrdersRepository) {}
+
+  async create(payload: CreateOrderDto) {
+    const hasUserActiveOrder = await this.ordersRepository.findBy({
+      phone: payload.phone,
+      status: OrderStatus.NEW,
+    });
+
+    if (hasUserActiveOrder) {
+      throw new ConflictException('You already have order');
+    }
+
+    return this.ordersRepository.create(payload);
   }
 
   findAll() {
-    return `This action returns all orders`;
+    return this.ordersRepository.findAll();
   }
 
   findOne(id: number) {

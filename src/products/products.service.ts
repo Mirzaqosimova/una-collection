@@ -52,6 +52,12 @@ export class ProductsService {
           is_sold: false,
         });
       hasProduct['products'] = productOptions;
+    } else {
+      const productOptions =
+        await this.productOptionsRepository.findAllUserSidePastels({
+          product_id: id,
+        });
+      hasProduct['products'] = productOptions;
     }
 
     return hasProduct;

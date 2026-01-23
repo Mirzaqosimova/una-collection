@@ -27,7 +27,8 @@ export class ProductOptionsRepository {
         this.knex.raw(`
           jsonb_agg(
             jsonb_build_object(
-              'id', product_options.pattern_id,
+              'id', product_options.id,
+              'pattern_id', product_options.pattern_id,
               'photo', product_options.photos,
               'name_uz', patterns.name_uz,
               'name_ru', patterns.name_ru,
@@ -104,6 +105,7 @@ export class ProductOptionsRepository {
         'product_options.main_color_id',
         'product_options.measurement_id',
         'product_options.pattern_id',
+        'product_options.article',
         'product_options.price',
         'product_options.quantity',
         'main_color.name_uz as main_color_name_uz',
@@ -143,5 +145,39 @@ export class ProductOptionsRepository {
       .delete()
       .returning('*')
       .then((res) => res[0]);
+  }
+
+  async findAllUserSidePastels(arg0: { product_id: number }) {
+    return this.getBuilder()
+      .select(
+        'colors.id as main_color_id',
+        'colors.name_uz as main_color_name_uz',
+        'colors.name_ru as main_color_name_ru',
+        'colors.name_en as main_color_name_en',
+        'colors.code',
+        'colors.color',
+        this.knex.raw(`
+      jsonb_agg(
+        jsonb_build_object(
+          'measurement_id', measurements.id,
+          'measurement_name_uz', measurements.name_uz,
+          'measurement_name_en', measurements.name_en,
+          'measurement_name_ru', measurements.name_ru,
+          'id', product_options.id,
+          'product_id', product_options.product_id,
+          'photo', product_options.photos
+        )
+      ) AS size
+    `),
+      )
+      .innerJoin(
+        'measurements',
+        'measurements.id',
+        'product_options.measurement_id',
+      )
+      .innerJoin('colors', 'colors.id', 'product_options.main_color_id')
+      .where('product_options.product_id', arg0.product_id)
+      .andWhereNot('product_options.quantity', 0)
+      .groupBy('colors.id');
   }
 }

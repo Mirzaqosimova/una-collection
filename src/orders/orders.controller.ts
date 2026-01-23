@@ -22,6 +22,7 @@ export class OrdersController {
     return this.ordersService.create(createOrderDto);
   }
 
+  @Public()
   @Get()
   findAll() {
     return this.ordersService.findAll();

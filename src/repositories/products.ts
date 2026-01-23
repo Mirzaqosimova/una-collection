@@ -1,6 +1,7 @@
 import { Knex } from 'knex';
 import { InjectKnex } from 'nestjs-knex';
 import { getResult } from 'src/common/dto/find-all-response';
+import { ProductType } from 'src/common/types/enums';
 import { CreateProductDto } from 'src/products/dto/create-products.dto';
 import { ProductsFilter } from 'src/products/dto/query.dto';
 
@@ -75,7 +76,16 @@ export class ProductsRepository {
     order by product_options.created_at
     limit 1 ) as product_options on true`,
       )
-      .where({ 'product_options.is_sold': false });
+      .where(function () {
+        this.where('products.type', ProductType.CLOTHES)
+          .andWhere('product_options.is_sold', false)
+          .orWhere(function () {
+            this.whereNot('products.type', ProductType.CLOTHES).andWhereNot(
+              'product_options.quantity',
+              0,
+            );
+          });
+      });
 
     if (category_id) {
       bQuery.where({ 'products.category_id': category_id });
