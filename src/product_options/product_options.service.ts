@@ -81,7 +81,7 @@ export class ProductOptionsService {
     const hasDuplicateProduct =
       await this.productOptionsRepository.findBy(validation);
 
-    if (hasDuplicateProduct) {
+    if (hasDuplicateProduct && hasDuplicateProduct.id !== id) {
       throw new ConflictException('Duplicate product options');
     }
 
