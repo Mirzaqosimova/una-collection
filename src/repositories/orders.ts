@@ -38,21 +38,15 @@ export class OrdersRepository {
 
       await trx('order_options').insert(options);
       for (const product of products) {
-        let updatePayload;
         if (product.quantity) {
-          updatePayload = {
-            quantity: this.knex.increment('1'),
-          };
+          await trx('product_options')
+            .where({ id: product.product_option_id })
+            .increment('quantity', 1);
         } else {
-          updatePayload = {
-            is_sold: true,
-          };
+          await trx('product_options')
+            .where({ id: product.product_option_id })
+            .update({ is_sold: true });
         }
-        console.log(updatePayload);
-
-        await trx('product_options')
-          .where({ id: product.product_option_id })
-          .update(updatePayload);
       }
 
       return order;
