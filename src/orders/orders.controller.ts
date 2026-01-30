@@ -6,11 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { Public } from 'src/common/decorators/is-public.decorator';
+import { OrdersQueryDto } from './dto/query.dto';
+import { ChangeStatusDto } from './dto/update-order.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -22,10 +25,9 @@ export class OrdersController {
     return this.ordersService.create(createOrderDto);
   }
 
-  @Public()
   @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  findAll(@Query() query: OrdersQueryDto) {
+    return this.ordersService.findAll(query);
   }
 
   @Get(':id')
@@ -33,9 +35,12 @@ export class OrdersController {
     return this.ordersService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
+  @Patch('change-status/:id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateOrderDto: ChangeStatusDto,
+  ) {
+    return this.ordersService.changeStatus(id, updateOrderDto);
   }
 
   @Delete(':id')

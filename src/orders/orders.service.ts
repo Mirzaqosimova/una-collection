@@ -1,8 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import { ChangeStatusDto } from './dto/update-order.dto';
 import { OrdersRepository } from 'src/repositories/orders';
 import { OrderStatus } from 'src/common/types/enums';
+import { OrdersQueryDto } from './dto/query.dto';
+import { OrderOptionsRepository } from 'src/repositories/order_options';
 
 @Injectable()
 export class OrdersService {
@@ -21,16 +23,16 @@ export class OrdersService {
     return this.ordersRepository.create(payload);
   }
 
-  findAll() {
-    return this.ordersRepository.findAll();
+  findAll(query: OrdersQueryDto) {
+    return this.ordersRepository.findAll(query);
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} order`;
+    return this.ordersRepository.findByIdAdmin({ id });
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  changeStatus(id: number, payload: ChangeStatusDto) {
+    if (payload.status!) return this.ordersRepository.update({ id }, payload);
   }
 
   remove(id: number) {

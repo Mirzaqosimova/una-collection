@@ -8,7 +8,6 @@ export async function up(knex: Knex): Promise<void> {
       .references('id')
       .inTable('product_options')
       .notNullable();
-    table.integer('quantity');
     table
       .integer('order_id')
       .references('id')

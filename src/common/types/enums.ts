@@ -25,7 +25,7 @@ export enum PaymentType {
 export enum DeliveryType {
   ONE_TWO_HOUR = 'one_two_hour',
   ONE_DAY = 'one_day',
-  THREE_DAY = 'three_day',
+  TWO_FIVE_DAYS = 'two_five_days',
 }
 
 export enum PatternType {

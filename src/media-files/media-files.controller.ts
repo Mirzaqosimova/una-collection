@@ -27,7 +27,6 @@ import { Public } from 'src/common/decorators/is-public.decorator';
 export class MediaFilesController {
   constructor(private readonly mediaFilesService: MediaFilesService) {}
 
-  @Public()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Upload a media file (jpg, jpeg, png, pdf)' })

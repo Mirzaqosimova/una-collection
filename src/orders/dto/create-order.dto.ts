@@ -20,7 +20,6 @@ export class CreateOrderProductDto {
 
   @ApiProperty({ example: 2, required: false })
   @IsNumber()
-  @IsOptional()
   @Min(1)
   quantity: number;
 

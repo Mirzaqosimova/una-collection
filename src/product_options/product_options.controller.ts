@@ -31,7 +31,6 @@ export class ProductOptionsController {
     return this.productOptionsService.findAll(query);
   }
 
-  @Public()
   @Get('/check-exists')
   checkExists(@Query() query: ProductOptionsExistsFilter) {
     return this.productOptionsService.checkExists(query);
