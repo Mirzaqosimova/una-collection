@@ -87,7 +87,7 @@ export class OrdersRepository {
   }
 
   update(param: { id: number }, payload: ChangeStatusDto) {
-    return this.getBuilder().where(param).update(payload);
+    return this.getBuilder().where(param).update(payload).returning('id');
   }
 
   findByIdAdmin(arg0: { id: number }) {
@@ -95,7 +95,9 @@ export class OrdersRepository {
       .select(
         'orders.*',
         this.knex.raw(
-          `jsonb_agg(jsonb_build_object('id', product_options.id,
+          `jsonb_agg( distinct jsonb_build_object('id', order_options.id,
+          'product_option_id',product_options.id,
+          'product_id',products.id,
           'quantity',order_options.quantity,
           'price',order_options.price,
           'name_uz',products.name_uz,
@@ -138,5 +140,9 @@ export class OrdersRepository {
       .where({ 'orders.id': arg0.id })
       .groupBy('orders.id')
       .first();
+  }
+
+  remove(id: number) {
+    return this.getBuilder().where({ id }).delete();
   }
 }

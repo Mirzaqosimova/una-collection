@@ -31,11 +31,26 @@ export class OrdersService {
     return this.ordersRepository.findByIdAdmin({ id });
   }
 
-  changeStatus(id: number, payload: ChangeStatusDto) {
-    if (payload.status!) return this.ordersRepository.update({ id }, payload);
+  async changeStatus(id: number, payload: ChangeStatusDto) {
+    const hasOrder = await this.ordersRepository.findByIdAdmin({
+      id,
+    });
+    if (!hasOrder) {
+      throw new ConflictException('Order not found');
+    }
+    if (payload.status == OrderStatus.NEW) {
+      throw new ConflictException('You can not change status to NEW');
+    }
+    if (payload.status == OrderStatus.DONE && !payload.payment_check) {
+      throw new ConflictException(
+        'You can not change status to DONE without payment check',
+      );
+    }
+
+    return this.ordersRepository.update({ id }, payload);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} order`;
+    return this.ordersRepository.remove(id);
   }
 }
