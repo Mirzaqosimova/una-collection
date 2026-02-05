@@ -13,6 +13,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule } from '@nestjs/config';
 import { CategoriesModule } from './categories/categories.module';
 import { PatternsModule } from './patterns/patterns.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { PatternsModule } from './patterns/patterns.module';
     MediaFilesModule,
     CategoriesModule,
     PatternsModule,
+    PaymentsModule,
   ],
 })
 export class AppModule {}

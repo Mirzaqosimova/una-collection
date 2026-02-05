@@ -5,10 +5,14 @@ import { OrdersRepository } from 'src/repositories/orders';
 import { OrderStatus } from 'src/common/types/enums';
 import { OrdersQueryDto } from './dto/query.dto';
 import { OrderOptionsRepository } from 'src/repositories/order_options';
+import { PaymentsService } from 'src/payments/payments.service';
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly ordersRepository: OrdersRepository) {}
+  constructor(
+    private readonly ordersRepository: OrdersRepository,
+    private readonly paymentsService: PaymentsService,
+  ) {}
 
   async create(payload: CreateOrderDto) {
     const hasUserActiveOrder = await this.ordersRepository.findBy({
@@ -52,5 +56,15 @@ export class OrdersService {
 
   remove(id: number) {
     return this.ordersRepository.remove(id);
+  }
+
+  async generatePaymentLink(id: number) {
+    const hasOrder = await this.ordersRepository.findBy({ id });
+
+    if (!hasOrder) {
+      throw new ConflictException('Order not found');
+    }
+
+    return this.paymentsService.generateClickLink(hasOrder);
   }
 }

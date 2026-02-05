@@ -7,6 +7,7 @@ import { cwd } from 'process';
 import * as dotenv from 'dotenv';
 import { TransactionsService } from './services/transactions';
 import { KnexOptions } from './options/knex.options';
+import { HashingService } from './services/hashing';
 
 dotenv.config();
 
@@ -22,7 +23,7 @@ dotenv.config();
       rootPath: join(cwd(), 'assets', 'files'),
     }),
   ],
-  providers: [TransactionsService],
-  exports: [TransactionsService],
+  providers: [TransactionsService, HashingService],
+  exports: [TransactionsService, HashingService],
 })
 export class CoreModules {}

@@ -8,12 +8,14 @@ import {
   Delete,
   Query,
   ParseIntPipe,
+  Res,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Public } from 'src/common/decorators/is-public.decorator';
 import { OrdersQueryDto } from './dto/query.dto';
 import { ChangeStatusDto } from './dto/update-order.dto';
+import { Response } from 'express';
 
 @Controller('orders')
 export class OrdersController {
@@ -41,6 +43,16 @@ export class OrdersController {
     @Body() updateOrderDto: ChangeStatusDto,
   ) {
     return this.ordersService.changeStatus(id, updateOrderDto);
+  }
+
+  @Get('make-payment/:id')
+  async makePayment(
+    @Param('id', ParseIntPipe) id: number,
+    @Res() res: Response,
+  ) {
+    const payment_link = await this.ordersService.generatePaymentLink(id);
+    res.header('Content-Type', 'application/json');
+    res.status(200).send(payment_link);
   }
 
   @Delete(':id')
