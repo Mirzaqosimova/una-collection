@@ -30,6 +30,7 @@ export class PaymentsService {
   }
 
   async handleMerchantTransactions(clickReqBody: ClickRequestDto) {
+    console.log(clickReqBody);
     const actionType = +clickReqBody.action;
 
     clickReqBody.amount = parseFloat(clickReqBody.amount + '');
