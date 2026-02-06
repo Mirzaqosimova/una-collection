@@ -6,8 +6,8 @@ export async function up(knex: Knex): Promise<void> {
     table
       .integer('order_id')
       .references('id')
-      .inTable('orders.id')
-      .onDelete('CASCADE')
+      .inTable('orders')
+      .onDelete('SET NULL')
       .notNullable();
     table.string('payment_method').notNullable(); //click
     table.string('fiscal_check');
