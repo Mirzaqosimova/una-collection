@@ -13,8 +13,11 @@ import { CreateMeasurementDto } from './dto/create-measurement.dto';
 import { MeasurementsFilter } from './dto/query.dto';
 import { MeasurementsService } from './measurement.service';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { Role } from 'src/common/types/enums';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
 @ApiBearerAuth()
+@Roles(Role.ADMIN)
 @Controller('measurements')
 export class MeasurementsController {
   constructor(private readonly measurementsService: MeasurementsService) {}

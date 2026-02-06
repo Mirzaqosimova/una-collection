@@ -15,8 +15,12 @@ import {
   ProductOptionsFilter,
 } from './dto/query.dto';
 import { ProductOptionsService } from './product_options.service';
-import { Public } from 'src/common/decorators/is-public.decorator';
+import { Role } from 'src/common/types/enums';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@Roles(Role.ADMIN)
 @Controller('product-options')
 export class ProductOptionsController {
   constructor(private readonly productOptionsService: ProductOptionsService) {}

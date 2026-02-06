@@ -4,7 +4,6 @@ import { ChangeStatusDto } from './dto/update-order.dto';
 import { OrdersRepository } from 'src/repositories/orders';
 import { OrderStatus } from 'src/common/types/enums';
 import { OrdersQueryDto } from './dto/query.dto';
-import { OrderOptionsRepository } from 'src/repositories/order_options';
 import { PaymentsService } from 'src/payments/payments.service';
 
 @Injectable()
@@ -14,7 +13,7 @@ export class OrdersService {
     private readonly paymentsService: PaymentsService,
   ) {}
 
-  async create(payload: CreateOrderDto) {
+  async create(payload: CreateOrderDto, user_id: number) {
     const hasUserActiveOrder = await this.ordersRepository.findBy({
       phone: payload.phone,
       status: OrderStatus.NEW,
@@ -24,7 +23,7 @@ export class OrdersService {
       throw new ConflictException('You already have order');
     }
 
-    return this.ordersRepository.create(payload);
+    return this.ordersRepository.create({ user_id, ...payload });
   }
 
   findAll(query: OrdersQueryDto) {
@@ -66,5 +65,9 @@ export class OrdersService {
     }
 
     return this.paymentsService.generateClickLink(hasOrder);
+  }
+
+  findUserOrders(query: OrdersQueryDto, user_id: number) {
+    return this.ordersRepository.findAll(query, user_id);
   }
 }

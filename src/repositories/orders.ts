@@ -22,7 +22,7 @@ export class OrdersRepository {
     return this.getBuilder().where(param).first();
   }
 
-  create({ products, ...orderData }: CreateOrderDto) {
+  create({ products, user_id, ...orderData }: CreateOrderDto) {
     return this.knex.transaction(async (trx) => {
       const [order] = await trx('orders')
         .insert({
@@ -56,10 +56,14 @@ export class OrdersRepository {
     });
   }
 
-  async findAll({ page, status, q }: OrdersQueryDto) {
+  async findAll({ page, status, q }: OrdersQueryDto, user_id?: number) {
     const bQuery = this.getBuilder()
       .select('*')
       .orderBy('delivery_type', 'desc');
+
+    if (user_id) {
+      bQuery.where('user_id', user_id);
+    }
 
     if (status) {
       bQuery.where({ 'orders.status': status });

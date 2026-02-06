@@ -13,8 +13,11 @@ import { ColorsService } from './colors.service';
 import { CreateColorDto } from './dto/create-color.dto';
 import { ColorsFilter } from './dto/query.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { Role } from 'src/common/types/enums';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
 @ApiBearerAuth()
+@Roles(Role.ADMIN)
 @Controller('colors')
 export class ColorsController {
   constructor(private readonly colorsService: ColorsService) {}
