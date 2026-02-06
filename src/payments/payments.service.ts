@@ -20,11 +20,11 @@ export class PaymentsService {
     private config: ConfigService,
     private hashingService: HashingService,
   ) {}
-  async generateClickLink(payload: { id: number; price: number }) {
+  async generateClickLink(payload: { id: number; total_price: number }) {
     return this.generateLink({
       service_id: this.config.get<number>('CLICK_SERVICE_ID'),
       merchant_id: this.config.get<number>('CLICK_MERCHANT_ID'),
-      amount: payload.price,
+      amount: payload.total_price,
       transaction_param: payload.id.toString(),
     });
   }
