@@ -45,6 +45,7 @@ export class OrdersController {
     return this.ordersService.changeStatus(id, updateOrderDto);
   }
 
+  @Public()
   @Get('make-payment/:id')
   async makePayment(
     @Param('id', ParseIntPipe) id: number,
