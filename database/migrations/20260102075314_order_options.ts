@@ -11,7 +11,7 @@ export async function up(knex: Knex): Promise<void> {
     table
       .integer('order_id')
       .references('id')
-      .inTable('orders.id')
+      .inTable('orders')
       .onDelete('CASCADE')
       .notNullable();
     table.integer('quantity');
