@@ -56,7 +56,10 @@ export class OrdersRepository {
     });
   }
 
-  async findAll({ page, status, q }: OrdersQueryDto, user_id?: number) {
+  async findAll(
+    { page, status, q, user_order_filter }: OrdersQueryDto,
+    user_id?: number,
+  ) {
     const bQuery = this.getBuilder()
       .select('*')
       .orderBy('delivery_type', 'desc');
@@ -67,6 +70,18 @@ export class OrdersRepository {
 
     if (status) {
       bQuery.where({ 'orders.status': status });
+    }
+
+    if (user_order_filter) {
+      if (user_order_filter == 'active') {
+        bQuery.whereIn('orders.status', [
+          OrderStatus.NEW,
+          OrderStatus.APPROVED,
+          OrderStatus.ON_DELIVERY,
+        ]);
+      } else {
+        //hammasi jonatadi shundogam all bolsa
+      }
     }
     if (q) {
       bQuery.where((bQuery) => {

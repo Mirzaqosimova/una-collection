@@ -8,4 +8,9 @@ export class OrdersQueryDto extends BaseFilter {
   @IsOptional()
   @IsEnum(OrderStatus)
   status?: OrderStatus;
+
+  @ApiProperty({ required: false, enum: ['active', 'all'] })
+  @IsOptional()
+  @IsEnum(['active', 'all'])
+  user_order_filter?: 'active' | 'all';
 }

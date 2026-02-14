@@ -22,4 +22,8 @@ export class UsersRepository {
   }) {
     return this.getBuilder().insert(payload).returning('*');
   }
+
+  update(data: { id: number }, payload: { full_name: string }) {
+    return this.getBuilder().where(data).update(payload).returning('*');
+  }
 }

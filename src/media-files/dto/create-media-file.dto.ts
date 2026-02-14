@@ -3,26 +3,26 @@ import { IsEnum, IsString } from 'class-validator';
 import { MediaFileAssociations, MediaFileUsages } from 'src/common/types/enums';
 
 export class CreateMediaFileDto {
-    @IsEnum(MediaFileAssociations)
-    @ApiProperty({ enum: MediaFileAssociations })
-    associated_with: string;
+  @IsEnum(MediaFileAssociations)
+  @ApiProperty({ enum: MediaFileAssociations })
+  associated_with: MediaFileAssociations;
 
-    @IsEnum(MediaFileUsages)
-    @ApiProperty({ enum: MediaFileUsages })
-    usage: string;
+  @IsEnum(MediaFileUsages)
+  @ApiProperty({ enum: MediaFileUsages })
+  usage: MediaFileUsages;
 
-    @ApiProperty({
-        name: 'file',
-        type: 'string',
-        format: 'binary',
-    })
-    file: any;
+  @ApiProperty({
+    name: 'file',
+    type: 'string',
+    format: 'binary',
+  })
+  file: any;
 
-    filename: string;
+  filename: string;
 }
 
 export class DeleteMediaDto {
-    @ApiProperty()
-    @IsString({ each: true })
-    path: string[];
+  @ApiProperty()
+  @IsString({ each: true })
+  path: string[];
 }

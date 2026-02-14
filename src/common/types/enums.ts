@@ -10,10 +10,12 @@ export enum ProductType {
 
 export enum MediaFileAssociations {
   PRODUCTS = 'products',
+  ORDERS = 'usage',
 }
 
 export enum MediaFileUsages {
   PHOTO = 'photo',
+  CHECK = 'check',
 }
 
 export enum LangEnum {

@@ -27,6 +27,13 @@ export class AuthService {
       });
 
       hasUser = res;
+    } else {
+      if (!hasUser.full_name && payload.full_name) {
+        await this.usersRepository.update(
+          { id: hasUser.id },
+          { full_name: payload.full_name },
+        );
+      }
     }
     return {
       ...hasUser,
