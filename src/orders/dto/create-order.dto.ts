@@ -4,7 +4,6 @@ import {
   IsNumber,
   IsOptional,
   IsEnum,
-  IsPhoneNumber,
   ValidateNested,
   IsArray,
   Min,
@@ -28,7 +27,9 @@ export class CreateOrderProductDto {
   price: number;
 }
 export class CreateOrderDto {
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+  })
   @IsString()
   phone: string;
 
