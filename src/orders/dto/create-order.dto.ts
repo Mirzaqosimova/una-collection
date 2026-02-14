@@ -17,7 +17,7 @@ export class CreateOrderProductDto {
   @IsNumber()
   product_option_id: number;
 
-  @ApiProperty({ example: 2, required: false })
+  @ApiProperty({ example: 2, required: true })
   @IsNumber()
   @Min(1)
   quantity: number;

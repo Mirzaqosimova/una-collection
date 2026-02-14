@@ -37,7 +37,7 @@ export class OrdersRepository {
         order_id: order.id,
         product_option_id: p.product_option_id,
         quantity: p.quantity,
-        price: p.price,
+        price: p.price * p.quantity,
       }));
 
       await trx('order_options').insert(options);
