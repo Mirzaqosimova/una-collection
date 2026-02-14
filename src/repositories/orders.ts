@@ -28,6 +28,7 @@ export class OrdersRepository {
         .insert({
           status: OrderStatus.NEW,
           ...orderData,
+          user_id,
           total_price: products.reduce((sum, i) => sum + i.price, 0),
         })
         .returning('*');
