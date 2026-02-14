@@ -10,6 +10,7 @@ export async function up(knex: Knex): Promise<void> {
       .onDelete('SET NULL')
       .notNullable();
     table.string('payment_method').notNullable(); //click
+    table.string('payment_id').nullable(); //click
     table.string('fiscal_check');
     table.string('status').defaultTo('pending');
     table.string('click_trans_id'); //came from click

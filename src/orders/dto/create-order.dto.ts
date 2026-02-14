@@ -29,7 +29,7 @@ export class CreateOrderProductDto {
 }
 export class CreateOrderDto {
   @ApiProperty()
-  @IsPhoneNumber()
+  @IsString()
   phone: string;
 
   @ApiProperty()

@@ -192,16 +192,17 @@ export class PaymentsService {
     return `https://my.click.uz/services/pay?service_id=${click.service_id}&merchant_id=${click.merchant_id}&amount=${click.amount}&transaction_param=${click.transaction_param}`;
   }
 
-  async getFiscalCheckLink(
+  generateFiscalLink(click: {}) {}
+
+  async submitFiscalItems(
     serviceId: number,
     paymentId: number,
     merchantId: number,
     secretKey: string,
+    items: any[],
   ) {
-    // CLICK Auth header format:
-    // Auth: merchant_id:sha1(secret_key + timestamp):timestamp
-
     const timestamp = Math.floor(Date.now() / 1000);
+
     const sign = crypto
       .createHash('sha1')
       .update(secretKey + timestamp)
@@ -209,15 +210,61 @@ export class PaymentsService {
 
     const authHeader = `${merchantId}:${sign}:${timestamp}`;
 
-    const url = `https://api.click.uz/v2/merchant/payment/ofd_data/${serviceId}/${paymentId}`;
+    const url =
+      'https://api.click.uz/v2/merchant/payment/ofd_data/submit_items';
 
-    const response = await axios.get(url, {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Auth: authHeader,
+    const response = await axios.post(
+      url,
+      {
+        service_id: serviceId,
+        payment_id: paymentId,
+        items: {
+          service_id: serviceId,
+          payment_id: paymentId,
+          items: [
+            {
+              Name: 'Футболки женские, шт',
+              SPIC: '06109002001000000',
+              PackageCode: '0000000000000',
+              GoodPrice: 100 * 100,
+              Price: 100 * 100,
+              Amount: 1,
+              VAT: 0,
+              VATPercent: 0,
+              CommissionInfo: {
+                TIN: '123456789',
+              },
+            },
+            {
+              Name: 'Постельное бельё (комплект)',
+              SPIC: '06302001007000000',
+              PackageCode: '0000000000000',
+              GoodPrice: 1000 * 100,
+              Price: 1000 * 100,
+              Amount: 1,
+              VAT: 0,
+              VATPercent: 0,
+              CommissionInfo: {
+                TIN: '123456789',
+              },
+            },
+          ],
+          received_ecash: 0,
+          received_cash: 0,
+          received_card: 1100 * 100,
+        },
+        received_ecash: 0,
+        received_cash: 0,
+        received_card: items.reduce((s, i) => s + i.Price, 0),
       },
-    });
+      {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Auth: authHeader,
+        },
+      },
+    );
 
     return response.data;
   }
