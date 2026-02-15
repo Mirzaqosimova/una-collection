@@ -29,7 +29,10 @@ export class OrdersRepository {
           status: OrderStatus.NEW,
           ...orderData,
           user_id,
-          total_price: products.reduce((sum, i) => sum + i.price, 0),
+          total_price: products.reduce(
+            (sum, i) => sum + i.price * i.quantity,
+            0,
+          ),
         })
         .returning('*');
 
