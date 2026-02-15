@@ -10,7 +10,7 @@ export class PaymentsController {
 
   @Post('click')
   async handleMerchantTransactions(@Body() clickReqBody: ClickRequestDto) {
-    console.log(clickReqBody);
+    console.log('-----------> ', clickReqBody);
     return this.paymentsService.handleMerchantTransactions(clickReqBody);
   }
 
