@@ -9,7 +9,7 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post('click')
-  async handleMerchantTransactions(@Body() clickReqBody: ClickRequestDto) {
+  async handleMerchantTransactions(@Body() clickReqBody: any) {
     console.log('-----------> ', clickReqBody);
     return this.paymentsService.handleMerchantTransactions(clickReqBody);
   }
