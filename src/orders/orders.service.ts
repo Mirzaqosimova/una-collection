@@ -44,10 +44,11 @@ export class OrdersService {
     if (payload.status == OrderStatus.NEW) {
       throw new ConflictException('You can not change status to NEW');
     }
-    if (payload.status == OrderStatus.DONE && !payload.payment_check) {
-      throw new ConflictException(
-        'You can not change status to DONE without payment check',
-      );
+    if (payload.status == OrderStatus.DONE && !hasOrder.payment_check) {
+      if (!payload.payment_check)
+        throw new ConflictException(
+          'You can not change status to DONE without payment check',
+        );
     }
 
     return this.ordersRepository.update({ id }, payload);
@@ -68,6 +69,6 @@ export class OrdersService {
   }
 
   findUserOrders(query: OrdersQueryDto, user_id: number) {
-    return this.ordersRepository.findAll(query, user_id);
+    return this.ordersRepository.findAllUser(query, user_id);
   }
 }
