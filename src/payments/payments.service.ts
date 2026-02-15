@@ -97,6 +97,7 @@ export class PaymentsService {
   }
 
   async prepare(clickReqBody: ClickRequestDto) {
+    console.log('prepare');
     await this.validateMD5(clickReqBody);
     const hasTransaction = await this.transactionsRepository.findBy({
       click_trans_id: clickReqBody.click_trans_id + '',
