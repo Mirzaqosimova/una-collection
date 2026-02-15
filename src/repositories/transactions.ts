@@ -43,6 +43,7 @@ export class TransactionsRepository {
           .returning('id'),
         trx('orders').where({ id: hasTransaction.order_id }).update({
           status: OrderStatus.APPROVED,
+          transaction_id: hasTransaction.id,
           is_paid: true,
         }),
       ]);

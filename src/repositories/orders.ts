@@ -229,4 +229,31 @@ export class OrdersRepository {
   remove(id: number) {
     return this.getBuilder().where({ id }).delete();
   }
+
+  findFiscalCheck(order_id: number) {
+    return this.getBuilder()
+      .select(
+        'transactions.payment_id',
+        this.knex.raw(
+          `jsonb_agg(jsonb_build_object(
+          'id', orders.id, 
+          'product_name', products.name_uz,
+          'quantity', order_options.quantity,
+          'price', order_options.price,
+          'spic', case when products.type = 'pastel' then '06302001007000000' else '06109002001000000' end 
+          )) as items`,
+        ),
+      )
+      .innerJoin('transactions', 'orders.transaction_id', 'transactions.id')
+      .innerJoin('order_options', 'orders.id', 'order_options.order_id')
+      .innerJoin(
+        'product_options',
+        'order_options.product_option_id',
+        'product_options.id',
+      )
+      .innerJoin('products', 'product_options.product_id', 'products.id')
+      .where({ 'orders.id': order_id })
+      .groupBy('transactions.payment_id')
+      .first();
+  }
 }

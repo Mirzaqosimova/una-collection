@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { Public } from 'src/common/decorators/is-public.decorator';
 import { ClickRequestDto } from './dto/interface';
@@ -12,5 +12,10 @@ export class PaymentsController {
   async handleMerchantTransactions(@Body() clickReqBody: ClickRequestDto) {
     console.log(clickReqBody);
     return this.paymentsService.handleMerchantTransactions(clickReqBody);
+  }
+
+  @Post('click-check/:order_id')
+  async generateFiscalLink(@Param('order_id') order_id: number) {
+    return this.paymentsService.generateFiscalLink(order_id);
   }
 }

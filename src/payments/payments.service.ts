@@ -10,7 +10,7 @@ import { ClickRequestDto } from './dto/interface';
 import { HashingService } from 'src/common/services/hashing';
 import { OrdersRepository } from 'src/repositories/orders';
 import axios from 'axios';
-import crypto from 'crypto';
+import { createHash } from 'crypto';
 
 @Injectable()
 export class PaymentsService {
@@ -192,19 +192,52 @@ export class PaymentsService {
     return `https://my.click.uz/services/pay?service_id=${click.service_id}&merchant_id=${click.merchant_id}&amount=${click.amount}&transaction_param=${click.transaction_param}`;
   }
 
-  generateFiscalLink(click: {}) {}
+  async generateFiscalLink(order_id: number) {
+    const ordersInfo = await this.ordersRepository.findFiscalCheck(order_id);
+    return this.submitFiscalItems(
+      this.config.get<number>('CLICK_SERVICE_ID'),
+      this.config.get<number>('CLICK_MERCHANT_ID'),
+      ordersInfo.payment_id,
+      this.config.get<string>('CLICK_SECRET_KEY'),
+      ordersInfo.items.map((item) => ({
+        Name: item.product_name,
+        SPIC: item.spic,
+        PackageCode: '0000000000000',
+        GoodPrice: item.price * 100,
+        Price: item.price * 100 * item.quantity,
+        Amount: item.quantity,
+        VAT: 0,
+        VATPercent: 0,
+        CommissionInfo: {
+          TIN: '519468848',
+        },
+      })),
+    );
+  }
 
   async submitFiscalItems(
     serviceId: number,
-    paymentId: number,
     merchantId: number,
+    paymentId: number,
     secretKey: string,
-    items: any[],
+    items: {
+      Name: string;
+      SPIC: string;
+      PackageCode: string;
+      GoodPrice: number;
+      Price: number;
+      Amount: number;
+      VAT: number;
+      VATPercent: number;
+      CommissionInfo: {
+        TIN: string;
+      };
+    }[],
   ) {
+    console.log(items);
     const timestamp = Math.floor(Date.now() / 1000);
 
-    const sign = crypto
-      .createHash('sha1')
+    const sign = createHash('sha1')
       .update(secretKey + timestamp)
       .digest('hex');
 
@@ -218,44 +251,10 @@ export class PaymentsService {
       {
         service_id: serviceId,
         payment_id: paymentId,
-        items: {
-          service_id: serviceId,
-          payment_id: paymentId,
-          items: [
-            {
-              Name: 'Футболки женские, шт',
-              SPIC: '06109002001000000',
-              PackageCode: '0000000000000',
-              GoodPrice: 100 * 100,
-              Price: 100 * 100,
-              Amount: 1,
-              VAT: 0,
-              VATPercent: 0,
-              CommissionInfo: {
-                TIN: '123456789',
-              },
-            },
-            {
-              Name: 'Постельное бельё (комплект)',
-              SPIC: '06302001007000000',
-              PackageCode: '0000000000000',
-              GoodPrice: 1000 * 100,
-              Price: 1000 * 100,
-              Amount: 1,
-              VAT: 0,
-              VATPercent: 0,
-              CommissionInfo: {
-                TIN: '123456789',
-              },
-            },
-          ],
-          received_ecash: 0,
-          received_cash: 0,
-          received_card: 1100 * 100,
-        },
+        items,
         received_ecash: 0,
         received_cash: 0,
-        received_card: items.reduce((s, i) => s + i.Price, 0),
+        received_card: 1100 * 100,
       },
       {
         headers: {
