@@ -14,7 +14,7 @@ export interface TransactionI {
 export class ClickRequestDto {
   click_trans_id: number;
   service_id: number;
-  click_paydoc_id: number;
+  click_paydoc_id: string;
   merchant_user_id?: string;
   merchant_trans_id: string;
   amount: number;

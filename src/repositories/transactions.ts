@@ -30,7 +30,7 @@ export class TransactionsRepository {
     return this.getBuilder().where(arg0).update(arg1);
   }
 
-  completeOrder(hasTransaction: TransactionI, payment_id: number) {
+  completeOrder(hasTransaction: TransactionI, payment_id: string) {
     return this.knex.transaction(async (trx) => {
       const [[res]] = await Promise.all([
         this.getBuilder(trx)

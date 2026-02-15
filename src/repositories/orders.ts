@@ -40,7 +40,7 @@ export class OrdersRepository {
         order_id: order.id,
         product_option_id: p.product_option_id,
         quantity: p.quantity,
-        price: p.price * p.quantity,
+        price: p.price,
       }));
 
       await trx('order_options').insert(options);
@@ -102,7 +102,8 @@ export class OrdersRepository {
           .raw(`jsonb_agg( distinct jsonb_build_object('id', order_options.id,
         'product_option_id',product_options.id,
         'quantity',order_options.quantity,
-        'price',order_options.price,
+        'price',order_options.price ,
+        'total_price',order_options.price * order_options.quantity,
         'photos',product_options.photos,
         'name_uz',products.name_uz,
         'name_ru',products.name_ru,
