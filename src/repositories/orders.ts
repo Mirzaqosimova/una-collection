@@ -259,7 +259,7 @@ export class OrdersRepository {
       )
       .innerJoin('products', 'product_options.product_id', 'products.id')
       .where({ 'orders.id': order_id })
-      .groupBy('transactions.payment_id')
+      .groupBy('transactions.payment_id', 'orders.id')
       .first();
   }
 }
