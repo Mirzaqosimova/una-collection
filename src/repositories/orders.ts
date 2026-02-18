@@ -244,7 +244,8 @@ export class OrdersRepository {
           'product_name', products.name_uz,
           'quantity', order_options.quantity,
           'price', order_options.price,
-          'spic', case when products.type = 'pastel' then '06302001007000000' else '06109002001000000' end 
+          'spic', case when products.type = 'pastel' then '06302001007000000' else '06109002001000000' end ,
+          'package_code', case when products.type = 'pastel' then '1520313' else '1149145' end 
           )) as items`,
         ),
       )
