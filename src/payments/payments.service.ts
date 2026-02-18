@@ -14,16 +14,24 @@ import { createHash } from 'crypto';
 
 @Injectable()
 export class PaymentsService {
+  private readonly CLICK_SERVICE_ID;
+  private readonly CLICK_MERCHANT_ID;
+  private readonly CLICK_SECRET_KEY;
+
   constructor(
     private readonly transactionsRepository: TransactionsRepository,
     private readonly ordersRepository: OrdersRepository,
     private config: ConfigService,
     private hashingService: HashingService,
-  ) {}
+  ) {
+    this.CLICK_SERVICE_ID = this.config.get<string>('CLICK_SERVICE_ID');
+    this.CLICK_MERCHANT_ID = this.config.get<string>('CLICK_MERCHANT_ID');
+    this.CLICK_SECRET_KEY = this.config.get<string>('CLICK_SECRET_KEY');
+  }
   async generateClickLink(payload: { id: number; total_price: number }) {
     return this.generateLink({
-      service_id: this.config.get<number>('CLICK_SERVICE_ID'),
-      merchant_id: this.config.get<number>('CLICK_MERCHANT_ID'),
+      service_id: this.CLICK_SERVICE_ID,
+      merchant_id: this.CLICK_MERCHANT_ID,
       amount: payload.total_price,
       transaction_param: payload.id.toString(),
     });
@@ -169,7 +177,7 @@ export class PaymentsService {
     const myMD5Params = {
       clickTransId: clickReqBody.click_trans_id + '',
       serviceId: clickReqBody.service_id,
-      secretKey: this.config.get<string>('CLICK_SECRET_KEY'),
+      secretKey: this.CLICK_SECRET_KEY,
       merchantTransId: clickReqBody.merchant_trans_id,
       amount: clickReqBody.amount,
       action: clickReqBody.action,
@@ -196,10 +204,7 @@ export class PaymentsService {
   async generateFiscalLink(order_id: number) {
     const ordersInfo = await this.ordersRepository.findFiscalCheck(order_id);
     return this.submitFiscalItems(
-      this.config.get<number>('CLICK_SERVICE_ID'),
-      this.config.get<number>('CLICK_MERCHANT_ID'),
       ordersInfo.payment_id,
-      this.config.get<string>('CLICK_SECRET_KEY'),
       ordersInfo.total_price,
       ordersInfo.items.map((item) => ({
         Name: item.product_name,
@@ -218,10 +223,7 @@ export class PaymentsService {
   }
 
   async submitFiscalItems(
-    serviceId: number,
-    merchantId: number,
     paymentId: number,
-    secretKey: string,
     total_price: number,
     items: {
       Name: string;
@@ -241,10 +243,10 @@ export class PaymentsService {
     const timestamp = Math.floor(Date.now() / 1000);
 
     const sign = createHash('sha1')
-      .update(secretKey + timestamp)
+      .update(this.CLICK_SECRET_KEY + timestamp)
       .digest('hex');
 
-    const authHeader = `${merchantId}:${sign}:${timestamp}`;
+    const authHeader = `${this.CLICK_MERCHANT_ID}:${sign}:${timestamp}`;
 
     const url =
       'https://api.click.uz/v2/merchant/payment/ofd_data/submit_items';
@@ -252,7 +254,7 @@ export class PaymentsService {
     const response = await axios.post(
       url,
       {
-        service_id: serviceId,
+        service_id: this.CLICK_SERVICE_ID,
         payment_id: paymentId,
         items,
         received_ecash: 0,
@@ -267,6 +269,30 @@ export class PaymentsService {
         },
       },
     );
+    const res = await this.getFiscalCheckLink(paymentId);
+    return { res1: response.data, res: res };
+  }
+
+  async getFiscalCheckLink(
+    paymentId: number,
+  ): Promise<{ paymentId: number; qrCodeURL: string }> {
+    const timestamp = Math.floor(Date.now() / 1000);
+
+    const sign = createHash('sha1')
+      .update(this.CLICK_SECRET_KEY + timestamp)
+      .digest('hex');
+
+    const authHeader = `${this.CLICK_MERCHANT_ID}:${sign}:${timestamp}`;
+
+    const url = `https://api.click.uz/v2/merchant/payment/ofd_data/${this.CLICK_SECRET_KEY}/${paymentId}`;
+
+    const response = await axios.get(url, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Auth: authHeader,
+      },
+    });
 
     return response.data;
   }

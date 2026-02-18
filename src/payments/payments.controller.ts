@@ -18,4 +18,9 @@ export class PaymentsController {
   async generateFiscalLink(@Param('order_id') order_id: number) {
     return this.paymentsService.generateFiscalLink(order_id);
   }
+
+  @Post('click-get-link/:payment_id')
+  async getLink(@Param('payment_id') payment_id: number) {
+    return this.paymentsService.getFiscalCheckLink(payment_id);
+  }
 }
