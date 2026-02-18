@@ -203,7 +203,7 @@ export class PaymentsService {
       ordersInfo.items.map((item) => ({
         Name: item.product_name,
         SPIC: item.spic,
-        PackageCode: '0000000000000',
+        PackageCode: item.package_code,
         GoodPrice: item.price * 100,
         Price: item.price * 100 * item.quantity,
         Amount: item.quantity,
