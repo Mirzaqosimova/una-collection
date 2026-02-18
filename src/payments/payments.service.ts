@@ -101,6 +101,7 @@ export class PaymentsService {
       const res = await this.generateFiscalLink(
         +clickReqBody.merchant_trans_id,
       );
+      console.log(res);
       await this.ordersRepository.update(
         { id: +clickReqBody.merchant_trans_id },
         { payment_check: res.qrCodeURL },
