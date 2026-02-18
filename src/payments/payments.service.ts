@@ -98,14 +98,6 @@ export class PaymentsService {
         hasTransaction,
         clickReqBody.click_paydoc_id,
       );
-      const res = await this.generateFiscalLink(
-        +clickReqBody.merchant_trans_id,
-      );
-      console.log(res);
-      await this.ordersRepository.update(
-        { id: +clickReqBody.merchant_trans_id },
-        { payment_check: res.qrCodeURL },
-      );
       return {
         click_trans_id: clickReqBody.click_trans_id,
         merchant_trans_id: clickReqBody.merchant_trans_id,
@@ -217,7 +209,7 @@ export class PaymentsService {
 
   async generateFiscalLink(order_id: number) {
     const ordersInfo = await this.ordersRepository.findFiscalCheck(order_id);
-    return this.submitFiscalItems(
+    const res = await this.submitFiscalItems(
       ordersInfo.payment_id,
       ordersInfo.total_price,
       ordersInfo.items.map((item) => ({
@@ -233,6 +225,11 @@ export class PaymentsService {
           TIN: '519468848',
         },
       })),
+    );
+
+    await this.ordersRepository.update(
+      { id: order_id },
+      { payment_check: res.qrCodeURL },
     );
   }
 
