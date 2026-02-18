@@ -297,28 +297,28 @@ export class PaymentsService {
     paymentId: number,
   ): Promise<{ paymentId: number; qrCodeURL: string }> {
     console.log(paymentId);
-    try {
-      const timestamp = Math.floor(Date.now() / 1000);
+    // try {
+    const timestamp = Math.floor(Date.now() / 1000);
 
-      const sign = createHash('sha1')
-        .update(this.CLICK_SECRET_KEY + timestamp)
-        .digest('hex');
+    const sign = createHash('sha1')
+      .update(this.CLICK_SECRET_KEY + timestamp)
+      .digest('hex');
 
-      const authHeader = `${this.CLICK_MERCHANT_ID}:${sign}:${timestamp}`;
+    const authHeader = `${this.CLICK_MERCHANT_ID}:${sign}:${timestamp}`;
 
-      const url = `https://api.click.uz/v2/merchant/payment/ofd_data/${this.CLICK_SERVICE_ID}/${paymentId}`;
-      console.log(url);
-      const response = await axios.get(url, {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Auth: authHeader,
-        },
-      });
-      return response.data;
-    } catch (e) {
-      console.log('Get check last step: ', e);
-      throw e;
-    }
+    const url = `https://api.click.uz/v2/merchant/payment/ofd_data/${this.CLICK_SERVICE_ID}/${paymentId}`;
+    console.log(url);
+    const response = await axios.get(url, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Auth: authHeader,
+      },
+    });
+    return response.data;
+    // } catch (e) {
+    //   console.log('Get check last step: ', e);
+    //   throw e;
+    // }
   }
 }
