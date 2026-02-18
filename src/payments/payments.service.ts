@@ -283,6 +283,7 @@ export class PaymentsService {
           },
         },
       );
+      console.log(response.data);
       if (response.data.error_code != 0) {
         throw new BadRequestException(response.data.error_note);
       }
@@ -315,7 +316,6 @@ export class PaymentsService {
         Auth: authHeader,
       },
     });
-    console.log(response);
     return response.data;
     // } catch (e) {
     //   console.log('Get check last step: ', e);
