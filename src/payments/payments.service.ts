@@ -276,6 +276,8 @@ export class PaymentsService {
   async getFiscalCheckLink(
     paymentId: number,
   ): Promise<{ paymentId: number; qrCodeURL: string }> {
+    console.log(paymentId);
+
     const timestamp = Math.floor(Date.now() / 1000);
 
     const sign = createHash('sha1')
@@ -284,8 +286,8 @@ export class PaymentsService {
 
     const authHeader = `${this.CLICK_MERCHANT_ID}:${sign}:${timestamp}`;
 
-    const url = `https://api.click.uz/v2/merchant/payment/ofd_data/${this.CLICK_SECRET_KEY}/${paymentId}`;
-
+    const url = `https://api.click.uz/v2/merchant/payment/ofd_data/${this.CLICK_SERVICE_ID}/${paymentId}`;
+    console.log(url);
     const response = await axios.get(url, {
       headers: {
         Accept: 'application/json',
@@ -293,7 +295,7 @@ export class PaymentsService {
         Auth: authHeader,
       },
     });
-
+    // 4809413030;
     return response.data;
   }
 }
