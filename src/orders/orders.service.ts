@@ -30,8 +30,11 @@ export class OrdersService {
     return this.ordersRepository.findAll(query);
   }
 
-  findOne(id: number) {
-    return this.ordersRepository.findByIdAdmin({ id });
+  async findOne(id: number) {
+    const res = await this.ordersRepository.findByIdAdmin({ id });
+    if (res.transaction_id && !res.payment_check) {
+      await this.paymentsService.generateFiscalLink(res.id);
+    }
   }
 
   async changeStatus(id: number, payload: ChangeStatusDto) {
