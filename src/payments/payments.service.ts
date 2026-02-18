@@ -200,6 +200,7 @@ export class PaymentsService {
       this.config.get<number>('CLICK_MERCHANT_ID'),
       ordersInfo.payment_id,
       this.config.get<string>('CLICK_SECRET_KEY'),
+      ordersInfo.total_price,
       ordersInfo.items.map((item) => ({
         Name: item.product_name,
         SPIC: item.spic,
@@ -221,6 +222,7 @@ export class PaymentsService {
     merchantId: number,
     paymentId: number,
     secretKey: string,
+    total_price: number,
     items: {
       Name: string;
       SPIC: string;
@@ -255,7 +257,7 @@ export class PaymentsService {
         items,
         received_ecash: 0,
         received_cash: 0,
-        received_card: 1100 * 100,
+        received_card: total_price * 100,
       },
       {
         headers: {

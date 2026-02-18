@@ -238,6 +238,7 @@ export class OrdersRepository {
     return this.getBuilder()
       .select(
         'transactions.payment_id',
+        'orders.total_price',
         this.knex.raw(
           `jsonb_agg(jsonb_build_object(
           'id', orders.id, 
