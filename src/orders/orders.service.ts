@@ -35,6 +35,7 @@ export class OrdersService {
     if (res.transaction_id && !res.payment_check) {
       await this.paymentsService.generateFiscalLink(res.id);
     }
+    return this.ordersRepository.findByIdAdmin({ id });
   }
 
   async changeStatus(id: number, payload: ChangeStatusDto) {
