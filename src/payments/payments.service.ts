@@ -315,6 +315,7 @@ export class PaymentsService {
         Auth: authHeader,
       },
     });
+    console.log(response);
     return response.data;
     // } catch (e) {
     //   console.log('Get check last step: ', e);
