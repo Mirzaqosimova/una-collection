@@ -10,17 +10,16 @@ export class PaymentsController {
 
   @Post('click')
   async handleMerchantTransactions(@Body() clickReqBody: any) {
-    console.log('-----------> ', clickReqBody);
     return this.paymentsService.handleMerchantTransactions(clickReqBody);
   }
 
-  @Post('click-check/:order_id')
-  async generateFiscalLink(@Param('order_id') order_id: number) {
-    return this.paymentsService.generateFiscalLink(order_id);
-  }
+  // @Post('click-check/:order_id')
+  // async generateFiscalLink(@Param('order_id') order_id: number) {
+  //   return this.paymentsService.generateFiscalLink(order_id);
+  // }
 
-  @Post('click-get-link/:payment_id')
-  async getLink(@Param('payment_id') payment_id: number) {
-    return this.paymentsService.getFiscalCheckLink(payment_id);
-  }
+  // @Post('click-get-link/:payment_id')
+  // async getLink(@Param('payment_id') payment_id: number) {
+  //   return this.paymentsService.getFiscalCheckLink(payment_id);
+  // }
 }

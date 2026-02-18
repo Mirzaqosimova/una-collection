@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { TransactionsRepository } from 'src/repositories/transactions';
 import {
   ClickError,
+  OrderStatus,
   TransactionActions,
   TransactionStatus,
 } from 'src/common/types/enums';
@@ -92,16 +93,28 @@ export class PaymentsService {
         error_note: 'Failed',
       };
     }
-    await this.transactionsRepository.completeOrder(
-      hasTransaction,
-      clickReqBody.click_paydoc_id,
-    );
-    return {
-      click_trans_id: clickReqBody.click_trans_id,
-      merchant_trans_id: clickReqBody.merchant_trans_id,
-      error: ClickError.Success,
-      error_note: 'Success',
-    };
+    try {
+      await this.transactionsRepository.completeOrder(
+        hasTransaction,
+        clickReqBody.click_paydoc_id,
+      );
+      const res = await this.generateFiscalLink(
+        +clickReqBody.merchant_trans_id,
+      );
+      await this.ordersRepository.update(
+        { id: +clickReqBody.merchant_trans_id },
+        { payment_check: res.qrCodeURL },
+      );
+      return {
+        click_trans_id: clickReqBody.click_trans_id,
+        merchant_trans_id: clickReqBody.merchant_trans_id,
+        error: ClickError.Success,
+        error_note: 'Success',
+      };
+    } catch (e) {
+      console.log('Complete payment: ', e);
+      throw new Error(e);
+    }
   }
 
   async prepare(clickReqBody: ClickRequestDto) {
@@ -241,61 +254,70 @@ export class PaymentsService {
   ) {
     console.log(items);
     const timestamp = Math.floor(Date.now() / 1000);
+    try {
+      const sign = createHash('sha1')
+        .update(this.CLICK_SECRET_KEY + timestamp)
+        .digest('hex');
 
-    const sign = createHash('sha1')
-      .update(this.CLICK_SECRET_KEY + timestamp)
-      .digest('hex');
+      const authHeader = `${this.CLICK_MERCHANT_ID}:${sign}:${timestamp}`;
 
-    const authHeader = `${this.CLICK_MERCHANT_ID}:${sign}:${timestamp}`;
+      const url =
+        'https://api.click.uz/v2/merchant/payment/ofd_data/submit_items';
 
-    const url =
-      'https://api.click.uz/v2/merchant/payment/ofd_data/submit_items';
-
-    const response = await axios.post(
-      url,
-      {
-        service_id: this.CLICK_SERVICE_ID,
-        payment_id: paymentId,
-        items,
-        received_ecash: 0,
-        received_cash: 0,
-        received_card: total_price * 100,
-      },
-      {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Auth: authHeader,
+      const response = await axios.post(
+        url,
+        {
+          service_id: this.CLICK_SERVICE_ID,
+          payment_id: paymentId,
+          items,
+          received_ecash: 0,
+          received_cash: 0,
+          received_card: total_price * 100,
         },
-      },
-    );
-    const res = await this.getFiscalCheckLink(paymentId);
-    return { res1: response.data, res: res };
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Auth: authHeader,
+          },
+        },
+      );
+      if (response.data.error_code != 0) {
+        throw new BadRequestException(response.data.error_note);
+      }
+      return this.getFiscalCheckLink(paymentId);
+    } catch (e) {
+      console.log('Submit fiscal: ', e);
+      throw e;
+    }
   }
 
   async getFiscalCheckLink(
     paymentId: number,
   ): Promise<{ paymentId: number; qrCodeURL: string }> {
     console.log(paymentId);
+    try {
+      const timestamp = Math.floor(Date.now() / 1000);
 
-    const timestamp = Math.floor(Date.now() / 1000);
+      const sign = createHash('sha1')
+        .update(this.CLICK_SECRET_KEY + timestamp)
+        .digest('hex');
 
-    const sign = createHash('sha1')
-      .update(this.CLICK_SECRET_KEY + timestamp)
-      .digest('hex');
+      const authHeader = `${this.CLICK_MERCHANT_ID}:${sign}:${timestamp}`;
 
-    const authHeader = `${this.CLICK_MERCHANT_ID}:${sign}:${timestamp}`;
-
-    const url = `https://api.click.uz/v2/merchant/payment/ofd_data/${this.CLICK_SERVICE_ID}/${paymentId}`;
-    console.log(url);
-    const response = await axios.get(url, {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Auth: authHeader,
-      },
-    });
-    // 4809413030;
-    return response.data;
+      const url = `https://api.click.uz/v2/merchant/payment/ofd_data/${this.CLICK_SERVICE_ID}/${paymentId}`;
+      console.log(url);
+      const response = await axios.get(url, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Auth: authHeader,
+        },
+      });
+      return response.data;
+    } catch (e) {
+      console.log('Get check last step: ', e);
+      throw e;
+    }
   }
 }

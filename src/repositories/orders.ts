@@ -174,7 +174,10 @@ export class OrdersRepository {
     );
   }
 
-  update(param: { id: number }, payload: ChangeStatusDto) {
+  update(
+    param: { id: number },
+    payload: { payment_check?: string; status?: OrderStatus },
+  ) {
     return this.getBuilder().where(param).update(payload).returning('id');
   }
 
