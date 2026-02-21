@@ -28,4 +28,32 @@ export class GetTokenUsers {
   @IsString()
   @IsOptional()
   full_name?: string;
+
+  @ApiProperty({
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  address?: string;
+
+  @ApiProperty({
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  yandex_address?: string;
+
+  @ApiProperty({
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  longitude?: string;
+
+  @ApiProperty({
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  latitude?: string;
 }

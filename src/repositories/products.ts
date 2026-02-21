@@ -70,22 +70,18 @@ export class ProductsRepository {
           case when products.type = 'pastels' then product_options.price else products.price end as price`),
       )
       .joinRaw(
-        `left join lateral(
-    select * from product_options
-    where product_options.product_id = products.id  
-    order by product_options.created_at
-    limit 1 ) as product_options on true`,
+        `inner join lateral(
+   SELECT *
+    FROM product_options
+    WHERE product_options.product_id = products.id
+      AND (
+        (products.type = 'clothes' AND product_options.is_sold = false)
+        OR
+        (products.type = 'pastels' AND product_options.quantity > 0)
       )
-      .where(function () {
-        this.where('products.type', ProductType.CLOTHES)
-          .andWhere('product_options.is_sold', false)
-          .orWhere(function () {
-            this.whereNot('products.type', ProductType.CLOTHES).andWhereNot(
-              'product_options.quantity',
-              0,
-            );
-          });
-      });
+    ORDER BY product_options.id desc
+    LIMIT 1) as product_options on true`,
+      );
 
     if (category_id) {
       bQuery.where({ 'products.category_id': category_id });
@@ -132,5 +128,36 @@ export class ProductsRepository {
 
   delete(param: { id: number }) {
     return this.getBuilder().where(param).delete();
+  }
+
+  findOrderFilters({ category_id }: ProductsFilter) {
+    const bQuery = this.getBuilder()
+      .select(
+        this.knex.raw(`
+        jsonb_agg( distinct jsonb_build_object('id', colors.id,
+        'name_uz', colors.name_uz,
+        'name_ru', colors.name_ru,
+        'name_en', colors.name_en,
+        'color', colors.color)) as colors,
+        jsonb_agg( distinct jsonb_build_object('id', measurements.id,
+        'name_uz', measurements.name_uz,
+        'name_ru', measurements.name_ru,
+        'name_en', measurements.name_en)) as measurements
+        `),
+      )
+      .innerJoin('product_options', 'products.id', 'product_options.product_id')
+      .innerJoin('colors', 'product_options.main_color_id', 'colors.id')
+      .innerJoin(
+        'measurements',
+        'product_options.measurement_id',
+        'measurements.id',
+      )
+      .first();
+
+    if (category_id) {
+      bQuery.where({ 'products.category_id': category_id });
+    }
+
+    return bQuery;
   }
 }

@@ -90,6 +90,10 @@ export class ProductsService {
   remove(id: number) {
     return this.productsRepository.delete({ id });
   }
+
+  findOrderFilters(query: ProductsFilter) {
+    return this.productsRepository.findOrderFilters(query);
+  }
 }
 
 export function createSlug(text: string): string {

@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { DeliveryType, PaymentType } from 'src/common/types/enums';
+import { DeliveryType, LangEnum, PaymentType } from 'src/common/types/enums';
 
 export class CreateOrderProductDto {
   @ApiProperty()
@@ -68,6 +68,10 @@ export class CreateOrderDto {
   @ValidateNested({ each: true })
   @Type(() => CreateOrderProductDto)
   products: CreateOrderProductDto[];
+
+  @ApiProperty({ required: true, enum: LangEnum })
+  @IsEnum(LangEnum)
+  language: LangEnum;
 
   user_id: number;
 }

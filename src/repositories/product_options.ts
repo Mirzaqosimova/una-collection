@@ -37,7 +37,7 @@ export class ProductOptionsRepository {
               'image', patterns.image,
               'color', patterns.color,
               'product_id', product_options.id
-            )
+            ) order by product_options.id desc
           ) AS patterns
         `),
       )
@@ -168,7 +168,7 @@ export class ProductOptionsRepository {
           'id', product_options.id,
           'product_id', product_options.product_id,
           'photo', product_options.photos
-        )
+        ) order by product_options.id desc
       ) AS size
     `),
       )

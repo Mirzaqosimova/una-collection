@@ -218,7 +218,7 @@ export class PaymentsService {
         PackageCode: item.package_code,
         GoodPrice: item.price * 100,
         Price: item.price * 100 * item.quantity,
-        Amount: item.quantity,
+        Amount: item.quantity * 1000,
         VAT: 0,
         VATPercent: 0,
         CommissionInfo: {

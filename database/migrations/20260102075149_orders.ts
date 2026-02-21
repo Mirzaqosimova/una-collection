@@ -19,6 +19,7 @@ export async function up(knex: Knex): Promise<void> {
     table.double('latitude');
     table.string('payment_type'); // click | yetkazib berish
     table.string('payment_check');
+    table.string('language').notNullable();
     table.boolean('is_paid').notNullable().defaultTo(false);
     table.integer('transaction_id');
     table.string('status').notNullable(); // new | approved | on_delivery | done | rejected\

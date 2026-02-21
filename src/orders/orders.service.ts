@@ -5,12 +5,15 @@ import { OrdersRepository } from 'src/repositories/orders';
 import { OrderStatus } from 'src/common/types/enums';
 import { OrdersQueryDto } from './dto/query.dto';
 import { PaymentsService } from 'src/payments/payments.service';
+import { SendSmsService } from 'src/common/services/sms.service';
+import { ORDER_STATUSES } from './dto/const';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly ordersRepository: OrdersRepository,
     private readonly paymentsService: PaymentsService,
+    private readonly sendSmsService: SendSmsService,
   ) {}
 
   async create(payload: CreateOrderDto, user_id: number) {
@@ -55,7 +58,16 @@ export class OrdersService {
         );
     }
 
-    return this.ordersRepository.update({ id }, payload);
+    const [res] = await this.ordersRepository.update({ id }, payload);
+
+    // await this.sendSmsService.sendSms(
+    //   hasOrder.phone,
+    //   ORDER_STATUSES.find((x) => x.status == payload.status)[
+    //     'message_' + hasOrder.language
+    //   ],
+    // );
+
+    return res;
   }
 
   remove(id: number) {

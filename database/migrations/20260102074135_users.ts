@@ -8,6 +8,10 @@ export async function up(knex: Knex): Promise<void> {
     table.string('role').notNullable();
     table.string('phone').nullable();
     table.string('full_name').nullable();
+    table.string('address');
+    table.string('yandex_address');
+    table.double('longitude');
+    table.double('latitude');
     table.dateTime('created_at').defaultTo(knex.fn.now());
   });
 }

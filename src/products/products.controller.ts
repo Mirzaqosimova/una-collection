@@ -41,6 +41,12 @@ export class ProductsController {
   }
 
   @Public()
+  @Get('user-side/filter')
+  findOrderFilters(@Query() query: ProductsFilter) {
+    return this.productsService.findOrderFilters(query);
+  }
+
+  @Public()
   @Get('/user-side/:id')
   findOneUserSide(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOneUserSide(id);
