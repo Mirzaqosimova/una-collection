@@ -27,6 +27,7 @@ export enum LangEnum {
 export enum PaymentType {
   CLICK = 'click',
   TERMINAL = 'terminal',
+  IN_PERSON = 'in_person',
 }
 
 export enum DeliveryType {
