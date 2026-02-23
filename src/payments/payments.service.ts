@@ -212,19 +212,25 @@ export class PaymentsService {
     const res = await this.submitFiscalItems(
       ordersInfo.payment_id,
       ordersInfo.total_price,
-      ordersInfo.items.map((item) => ({
-        Name: item.product_name,
-        SPIC: item.spic,
-        PackageCode: item.package_code,
-        GoodPrice: item.price * 100,
-        Price: item.price * 100 * item.quantity,
-        Amount: item.quantity * 1000,
-        VAT: 0,
-        VATPercent: 0,
-        CommissionInfo: {
-          TIN: '519468848',
-        },
-      })),
+      ordersInfo.items.map((item) => {
+        const priceInTiyin = item.price * 100 * item.quantity; // total price for the item
+        const vatPercent = 1; // 1%
+        const vatAmount = Math.round(priceInTiyin * (vatPercent / 100));
+
+        return {
+          Name: item.product_name,
+          SPIC: item.spic,
+          PackageCode: item.package_code,
+          GoodPrice: item.price * 100,
+          Price: item.price * 100 * item.quantity,
+          Amount: item.quantity * 1000,
+          VAT: vatAmount,
+          VATPercent: vatPercent,
+          CommissionInfo: {
+            TIN: '519468848',
+          },
+        };
+      }),
     );
 
     await this.ordersRepository.update(
