@@ -29,8 +29,21 @@ export class OrdersService {
     return this.ordersRepository.create({ user_id, ...payload });
   }
 
-  findAll(query: OrdersQueryDto) {
-    return this.ordersRepository.findAll(query);
+  async findAll(query: OrdersQueryDto) {
+    const resp = await this.ordersRepository.findAll(query);
+    if (
+      query.status &&
+      [OrderStatus.NEW, OrderStatus.APPROVED, OrderStatus.ON_DELIVERY].includes(
+        query.status,
+      ) &&
+      resp.entities.length
+    ) {
+      for (const order of resp.entities) {
+        if (order.transaction_id && !order.payment_check) {
+          await this.paymentsService.generateFiscalLink(order.id);
+        }
+      }
+    }
   }
 
   async findOne(id: number) {
