@@ -38,9 +38,13 @@ export class OrdersService {
       ) &&
       resp.entities.length
     ) {
-      for (const order of resp.entities) {
-        if (order.transaction_id && !order.payment_check) {
-          await this.paymentsService.generateFiscalLink(order.id);
+      for (let i = 0; i < resp.entities.length; i++) {
+        const element = resp.entities[i];
+        if (element.transaction_id && !element.payment_check) {
+          const payment_check = await this.paymentsService.generateFiscalLink(
+            element.id,
+          );
+          resp.entities[i]['payment_check'] = payment_check;
         }
       }
     }
