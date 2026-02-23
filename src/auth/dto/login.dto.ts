@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class LoginDto {
   @ApiProperty({
@@ -46,14 +46,14 @@ export class GetTokenUsers {
   @ApiProperty({
     type: String,
   })
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  longitude?: string;
+  longitude?: number;
 
   @ApiProperty({
     type: String,
   })
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  latitude?: string;
+  latitude?: number;
 }

@@ -19,11 +19,24 @@ export class UsersRepository {
     role: string;
     full_name?: string;
     phone: string;
+    address?: string;
+    yandex_address?: string;
+    longitude?: number;
+    latitude?: number;
   }) {
     return this.getBuilder().insert(payload).returning('*');
   }
 
-  update(data: { id: number }, payload: { full_name: string }) {
+  update(
+    data: { id: number },
+    payload: {
+      full_name?: string;
+      address?: string;
+      yandex_address?: string;
+      longitude?: number;
+      latitude?: number;
+    },
+  ) {
     return this.getBuilder().where(data).update(payload).returning('*');
   }
 }
