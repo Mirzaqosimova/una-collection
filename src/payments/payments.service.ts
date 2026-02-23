@@ -57,6 +57,7 @@ export class PaymentsService {
   }
 
   async complete(clickReqBody: ClickRequestDto) {
+    console.log('complete');
     await this.validateMD5(clickReqBody);
     const hasTransaction = await this.transactionsRepository.findBy({
       click_trans_id: clickReqBody.click_trans_id + '',
@@ -237,6 +238,7 @@ export class PaymentsService {
       { id: order_id },
       { payment_check: res.qrCodeURL },
     );
+    return res.qrCodeURL;
   }
 
   async submitFiscalItems(

@@ -44,14 +44,18 @@ export class OrdersService {
         }
       }
     }
+    return resp;
   }
 
   async findOne(id: number) {
     const res = await this.ordersRepository.findByIdAdmin({ id });
     if (res.transaction_id && !res.payment_check) {
-      await this.paymentsService.generateFiscalLink(res.id);
+      const payment_check = await this.paymentsService.generateFiscalLink(
+        res.id,
+      );
+      res['payment_check'] = payment_check;
     }
-    return this.ordersRepository.findByIdAdmin({ id });
+    return res;
   }
 
   async changeStatus(id: number, payload: ChangeStatusDto) {
