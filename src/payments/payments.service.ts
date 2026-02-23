@@ -213,9 +213,9 @@ export class PaymentsService {
       ordersInfo.payment_id,
       ordersInfo.total_price,
       ordersInfo.items.map((item) => {
-        const priceInTiyin = item.price * 100 * item.quantity; // total price for the item
-        const vatPercent = 1; // 1%
-        const vatAmount = Math.round(priceInTiyin * (vatPercent / 100));
+        // const priceInTiyin = item.price * 100 * item.quantity; // total price for the item
+        // const vatPercent = 1; // 1%
+        // const vatAmount = Math.round(priceInTiyin * (vatPercent / 100));
 
         return {
           Name: item.product_name,
@@ -224,8 +224,8 @@ export class PaymentsService {
           GoodPrice: item.price * 100,
           Price: item.price * 100 * item.quantity,
           Amount: item.quantity * 1000,
-          VAT: vatAmount,
-          VATPercent: vatPercent,
+          VAT: 0,
+          VATPercent: 0,
           CommissionInfo: {
             TIN: '519468848',
           },
