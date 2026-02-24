@@ -228,7 +228,7 @@ export class PaymentsService {
           VAT: 0,
           VATPercent: 0,
           CommissionInfo: {
-            TIN: '519468848',
+            PINFL: '41508880252153',
           },
         };
       }),
