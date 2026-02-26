@@ -49,6 +49,11 @@ export class CreateOrderDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
+  @IsString()
+  yandex_address?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsNumber()
   longitude?: number;
 
