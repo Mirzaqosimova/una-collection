@@ -19,16 +19,17 @@ export class AuthService {
     let hasUser = await this.usersRepository.findBy({ phone: payload.phone });
 
     if (!hasUser) {
-      const [res] = await this.usersRepository.create({
+      [hasUser] = await this.usersRepository.create({
         ...payload,
         login: payload.phone,
         role: Role.USER,
         password: payload.phone,
       });
-
-      hasUser = res;
     } else {
-      await this.usersRepository.update({ id: hasUser.id }, payload);
+      [hasUser] = await this.usersRepository.update(
+        { id: hasUser.id },
+        payload,
+      );
     }
     return {
       ...hasUser,
