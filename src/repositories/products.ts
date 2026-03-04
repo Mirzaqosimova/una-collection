@@ -160,4 +160,17 @@ export class ProductsRepository {
 
     return bQuery;
   }
+
+  findWithOrder(id: number) {
+    return this.getBuilder()
+      .select('products.id')
+      .innerJoin('product_options', 'product_options.product_id', 'products.id')
+      .innerJoin(
+        'order_options',
+        'order_options.product_option_id',
+        'product_options.id',
+      )
+      .where('products.id', id)
+      .first();
+  }
 }

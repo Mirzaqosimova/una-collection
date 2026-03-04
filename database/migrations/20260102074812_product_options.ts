@@ -8,6 +8,7 @@ export async function up(knex: Knex): Promise<void> {
       .integer('product_id')
       .references('id')
       .inTable('products')
+      .onDelete('CASCADE')
       .notNullable();
     table
       .integer('main_color_id')

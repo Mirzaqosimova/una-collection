@@ -87,7 +87,11 @@ export class ProductsService {
     );
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const hasOrder = await this.productsRepository.findWithOrder(id);
+    if (hasOrder) {
+      throw new ConflictException('У продукта есть заказы');
+    }
     return this.productsRepository.delete({ id });
   }
 
