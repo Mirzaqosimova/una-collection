@@ -26,7 +26,14 @@ export class OrdersService {
       throw new ConflictException('You already have order');
     }
 
-    return this.ordersRepository.create({ user_id, ...payload });
+    const res = await this.ordersRepository.create({ user_id, ...payload });
+    await this.sendSmsService.sendSms(
+      payload.phone,
+      ORDER_STATUSES.find((x) => x.status == OrderStatus.NEW)[
+        'message_' + payload.language
+      ],
+    );
+    return res;
   }
 
   async findAll(query: OrdersQueryDto) {
