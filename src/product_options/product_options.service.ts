@@ -75,6 +75,9 @@ export class ProductOptionsService {
     if (hasProduct.type === ProductType.CLOTHES) {
       validation['pattern_id'] = payload.pattern_id;
     } else {
+      if (payload.quantity < Number(hasProduct.quantity)) {
+        throw new ConflictException('Not enough quantity');
+      }
       validation['measurement_id'] = payload.measurement_id;
     }
 

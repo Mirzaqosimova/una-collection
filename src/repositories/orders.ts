@@ -45,11 +45,7 @@ export class OrdersRepository {
 
       await trx('order_options').insert(options);
       for (const product of products) {
-        if (product.quantity) {
-          await trx('product_options')
-            .where({ id: product.product_option_id })
-            .increment('quantity', 1);
-        } else {
+        if (!product.quantity) {
           await trx('product_options')
             .where({ id: product.product_option_id })
             .update({ is_sold: true });
