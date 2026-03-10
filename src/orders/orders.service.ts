@@ -81,12 +81,12 @@ export class OrdersService {
 
     const [res] = await this.ordersRepository.update({ id }, payload);
 
-    // await this.sendSmsService.sendSms(
-    //   hasOrder.phone,
-    //   ORDER_STATUSES.find((x) => x.status == payload.status)[
-    //     'message_' + hasOrder.language
-    //   ],
-    // );
+    await this.sendSmsService.sendSms(
+      hasOrder.phone,
+      ORDER_STATUSES.find((x) => x.status == payload.status)[
+        'message_' + hasOrder.language
+      ],
+    );
 
     return res;
   }
