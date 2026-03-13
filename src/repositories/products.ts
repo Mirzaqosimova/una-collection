@@ -39,7 +39,7 @@ export class ProductsRepository {
       .groupBy('products.id', 'categories.id');
 
     if (q) {
-      bQuery.whereILike(`name_${lang}`, `%${q}%`);
+      bQuery.whereILike(`products.name_${lang}`, `%${q}%`);
     }
 
     const [totalCount] = await bQuery
@@ -59,6 +59,15 @@ export class ProductsRepository {
 
   async findUserSide(query: ProductsFilter) {
     const { page, q, lang, category_id } = query;
+    let where = '';
+    if (query.color_id || query.measurement_id) {
+      if (query.color_id) {
+        where = ` and product_options.main_color_id = ${query.color_id}`;
+      }
+      if (query.measurement_id) {
+        where += ` and product_options.measurement_id = ${query.measurement_id}`;
+      }
+    }
     const bQuery = this.getBuilder()
       .select(
         'products.id',
@@ -78,7 +87,7 @@ export class ProductsRepository {
         (products.type = 'clothes' AND product_options.is_sold = false)
         OR
         (products.type = 'pastels' AND product_options.quantity > 0)
-      )
+      ) ${where}
     ORDER BY product_options.id desc
     LIMIT 1) as product_options on true`,
       );

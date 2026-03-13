@@ -15,6 +15,10 @@ export class CreateCategoryDto {
   @IsString()
   name_en: string;
 
+  @ApiProperty()
+  @IsString()
+  image: string;
+
   @ApiProperty({ enum: ProductType })
   @IsEnum(ProductType)
   product_type: ProductType;

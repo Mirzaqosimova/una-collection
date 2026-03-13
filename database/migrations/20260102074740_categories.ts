@@ -6,6 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('name_uz').notNullable();
     table.string('name_ru').notNullable();
     table.string('name_en').notNullable();
+    table.string('image').nullable();
     table.string('product_type').notNullable(); //products table ichidagi type
     table.dateTime('created_at').defaultTo(knex.fn.now());
   });

@@ -24,6 +24,9 @@ export async function up(knex: Knex): Promise<void> {
     table.string('article');
     table.integer('quantity').nullable();
     table.float('price').nullable();
+    table.text('description_uz').notNullable();
+    table.text('description_ru').notNullable();
+    table.text('description_en').notNullable();
     table.boolean('is_sold').notNullable().defaultTo(false);
     table.dateTime('created_at').defaultTo(knex.fn.now());
   });

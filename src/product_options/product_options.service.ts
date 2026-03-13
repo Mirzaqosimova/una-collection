@@ -112,6 +112,7 @@ export class ProductOptionsService {
       filter['pattern_id'] = query.pattern_id;
     }
     if (query.measurement_id) {
+      filter['measurement_id'] = query.measurement_id;
     }
     const hasDuplicateProduct =
       await this.productOptionsRepository.findBy(filter);

@@ -38,4 +38,16 @@ export class CreateProductOptionDto {
   @IsNumber()
   @IsOptional()
   price: number;
+
+  @ApiProperty()
+  @IsString()
+  description_uz: string;
+
+  @ApiProperty()
+  @IsString()
+  description_ru: string;
+
+  @ApiProperty()
+  @IsString()
+  description_en: string;
 }

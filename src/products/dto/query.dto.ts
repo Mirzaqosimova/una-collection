@@ -8,4 +8,14 @@ export class ProductsFilter extends BaseFilter {
   @IsNumberString()
   @IsOptional()
   category_id: number;
+
+  @ApiProperty({ required: false })
+  @IsNumberString()
+  @IsOptional()
+  measurement_id: number;
+
+  @ApiProperty({ required: false })
+  @IsNumberString()
+  @IsOptional()
+  color_id: number;
 }
