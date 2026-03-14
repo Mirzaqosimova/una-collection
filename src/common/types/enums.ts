@@ -11,6 +11,7 @@ export enum ProductType {
 export enum MediaFileAssociations {
   PRODUCTS = 'products',
   ORDERS = 'usage',
+  CATEGORIES = 'categories',
 }
 
 export enum MediaFileUsages {
