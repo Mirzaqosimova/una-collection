@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateProductOptionDto } from './dto/create-product_option.dto';
+import { ChangeOrderDto } from './dto/change-order.dto';
 import { ProductOptionsRepository } from 'src/repositories/product_options';
 import {
   ProductOptionsExistsFilter,
@@ -89,6 +90,10 @@ export class ProductOptionsService {
     }
 
     return this.productOptionsRepository.update({ id }, payload);
+  }
+
+  changeOrder(id: number, dto: ChangeOrderDto) {
+    return this.productOptionsRepository.changeOrder(id, dto.to_order);
   }
 
   async remove(id: number) {

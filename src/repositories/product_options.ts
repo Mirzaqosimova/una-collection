@@ -37,7 +37,7 @@ export class ProductOptionsRepository {
               'image', patterns.image,
               'color', patterns.color,
               'product_id', product_options.id
-            ) order by product_options.id desc
+            ) order by product_options.order
           ) AS patterns
         `),
       )
@@ -77,9 +77,45 @@ export class ProductOptionsRepository {
     return query;
   }
 
-  create(payload: CreateProductOptionDto) {
+  async maxOrderByProduct(productId: number): Promise<number> {
+    const result = await this.getBuilder()
+      .where('product_id', productId)
+      .max('order as max')
+      .first();
+    return Number(result?.max ?? 0);
+  }
+
+  async create(payload: CreateProductOptionDto) {
+    const max = await this.maxOrderByProduct(payload.product_id);
     return this.getBuilder()
-      .insert(payload)
+      .insert({ ...payload, order: max + 1 })
+      .returning('*')
+      .then((res) => res[0]);
+  }
+
+  async changeOrder(id: number, toOrder: number) {
+    const item = await this.findBy({ id });
+    if (!item) return null;
+    const fromOrder: number = item.order;
+    const productId: number = item.product_id;
+
+    if (fromOrder === toOrder) return item;
+
+    if (toOrder < fromOrder) {
+      await this.getBuilder()
+        .where('product_id', productId)
+        .whereBetween('order', [toOrder, fromOrder - 1])
+        .increment('order', 1);
+    } else {
+      await this.getBuilder()
+        .where('product_id', productId)
+        .whereBetween('order', [fromOrder + 1, toOrder])
+        .decrement('order', 1);
+    }
+
+    return this.getBuilder()
+      .where({ id })
+      .update({ order: toOrder })
       .returning('*')
       .then((res) => res[0]);
   }
@@ -171,7 +207,7 @@ export class ProductOptionsRepository {
           'id', product_options.id,
           'product_id', product_options.product_id,
           'photo', product_options.photos
-        ) order by product_options.id desc
+        ) order by product_options.order desc
       ) AS size
     `),
       )

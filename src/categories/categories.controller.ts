@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { ChangeOrderDto } from './dto/change-order.dto';
 import { CategoriesFilter } from './dto/query.dto';
 import { Public } from 'src/common/decorators/is-public.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -47,6 +48,15 @@ export class CategoriesController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.categoriesService.findOne(id);
+  }
+
+  @Roles(Role.ADMIN)
+  @Patch('change-order/:id')
+  changeOrder(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: ChangeOrderDto,
+  ) {
+    return this.categoriesService.changeOrder(id, dto);
   }
 
   @Roles(Role.ADMIN)

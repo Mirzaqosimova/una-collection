@@ -4,6 +4,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { ChangeOrderDto } from './dto/change-order.dto';
 import { CategoriesRepository } from 'src/repositories/categories';
 import { ProductOptionsRepository } from 'src/repositories/product_options';
 import { CategoriesFilter } from './dto/query.dto';
@@ -61,6 +62,10 @@ export class CategoriesService {
       throw new ConflictException('Category already exists');
     }
     return this.categoriesRepository.update({ id }, payload);
+  }
+
+  changeOrder(id: number, dto: ChangeOrderDto) {
+    return this.categoriesRepository.changeOrder(id, dto.to_order);
   }
 
   async remove(id: number) {
