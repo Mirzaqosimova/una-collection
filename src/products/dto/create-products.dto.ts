@@ -21,14 +21,17 @@ export class CreateProductDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   description_uz: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   description_ru: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   description_en: string;
 
   @ApiProperty()

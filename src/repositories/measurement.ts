@@ -23,11 +23,14 @@ export class MeasurementsRepository {
   }
 
   async find(query: MeasurementsFilter) {
-    const { product_type, page, q } = query;
+    const { product_type, page, q, lang } = query;
     const bQuery = this.getBuilder().select('*').orderBy('id', 'desc');
 
     if (product_type) {
       bQuery.where('product_type', product_type);
+    }
+    if (q) {
+      bQuery.whereILike(`name_${lang}`, `%${q}%`);
     }
     const [totalCount] = await bQuery
       .clone()
