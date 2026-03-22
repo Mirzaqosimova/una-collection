@@ -122,6 +122,7 @@ export class ProductOptionsRepository {
 
   findAll(query: ProductOptionsFilter) {
     const bQuery = this.getBuilder()
+      .orderBy('product_options.order')
       .leftJoin(
         'colors as main_color',
         'main_color.id',
@@ -135,6 +136,10 @@ export class ProductOptionsRepository {
       )
       .select([
         'product_options.id',
+        'product_options.description_uz',
+        'product_options.description_en',
+        'product_options.description_ru',
+        'product_options.order',
         'product_options.is_sold',
         'product_options.photos',
         'product_options.product_id',
