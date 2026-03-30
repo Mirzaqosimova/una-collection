@@ -14,7 +14,7 @@ export async function up(knex: Knex): Promise<void> {
       .integer('main_color_id')
       .references('id')
       .inTable('colors')
-      .notNullable();
+      .nullable();
     table.integer('pattern_id').references('id').inTable('patterns').nullable();
     table
       .integer('measurement_id')
