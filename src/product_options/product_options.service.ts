@@ -110,7 +110,6 @@ export class ProductOptionsService {
   async checkExists(query: ProductOptionsExistsFilter) {
     const filter = {
       product_id: query.product_id,
-      main_color_id: query.main_color_id,
     };
 
     if (query.pattern_id) {
@@ -118,6 +117,9 @@ export class ProductOptionsService {
     }
     if (query.measurement_id) {
       filter['measurement_id'] = query.measurement_id;
+    }
+    if (query.main_color_id) {
+      filter['main_color_id'] = query.main_color_id;
     }
     const hasDuplicateProduct =
       await this.productOptionsRepository.findBy(filter);

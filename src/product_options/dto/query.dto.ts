@@ -21,6 +21,7 @@ export class ProductOptionsExistsFilter {
 
   @ApiProperty({ required: false })
   @IsNumberString()
+  @IsOptional()
   main_color_id: number;
 
   @ApiProperty({ required: false })

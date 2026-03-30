@@ -191,39 +191,26 @@ export class ProductOptionsRepository {
   async findAllUserSidePastels(arg0: { product_id: number }) {
     return this.getBuilder()
       .select(
-        'colors.id as main_color_id',
-        'colors.name_uz as main_color_name_uz',
-        'colors.name_ru as main_color_name_ru',
-        'colors.name_en as main_color_name_en',
-        'colors.code',
-        'colors.color',
-        this.knex.raw(`
-      jsonb_agg(
-        jsonb_build_object(
-          'measurement_id', measurements.id,
-          'measurement_name_uz', measurements.name_uz,
-          'measurement_name_en', measurements.name_en,
-          'measurement_name_ru', measurements.name_ru,
-          'price', product_options.price,
-          'description_uz', product_options.description_uz,
-          'description_ru', product_options.description_ru,
-          'description_en', product_options.description_en,
-          'quantity', product_options.quantity,
-          'id', product_options.id,
-          'product_id', product_options.product_id,
-          'photo', product_options.photos
-        ) order by product_options.order desc
-      ) AS size
-    `),
+        'measurements.id as measurement_id',
+        'measurements.name_uz as measurement_name_uz',
+        'measurements.name_en as measurement_name_en',
+        'measurements.name_ru as measurement_name_ru',
+        'product_options.article',
+        'product_options.price',
+        'product_options.description_uz',
+        'product_options.description_ru',
+        'product_options.description_en',
+        'product_options.quantity',
+        'product_options.id',
+        'product_options.product_id',
+        'product_options.photos',
       )
       .innerJoin(
         'measurements',
         'measurements.id',
         'product_options.measurement_id',
       )
-      .innerJoin('colors', 'colors.id', 'product_options.main_color_id')
       .where('product_options.product_id', arg0.product_id)
-      .andWhereNot('product_options.quantity', 0)
-      .groupBy('colors.id');
+      .andWhereNot('product_options.quantity', 0);
   }
 }

@@ -9,6 +9,7 @@ export class CreateProductOptionDto {
 
   @ApiProperty()
   @IsInt()
+  @IsOptional()
   main_color_id: number;
 
   @ApiProperty()
