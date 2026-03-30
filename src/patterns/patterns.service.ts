@@ -15,16 +15,11 @@ export class PatternsService {
     private readonly productsOptionsRepository: ProductOptionsRepository,
   ) {}
   async create(createColorDto: CreatePatternDto) {
-    const hasCode = await this.patternRepository.findBy({
-      name_uz: createColorDto.name_uz,
-    });
     createColorDto.name_uz = createColorDto.name_uz
       .trim()
       .replace(/\s+/g, ' ')
       .replace(/['‘’`]/g, "'");
-    if (hasCode) {
-      throw new ConflictException('Color already exists');
-    }
+
     return this.patternRepository.create(createColorDto);
   }
 
@@ -37,14 +32,6 @@ export class PatternsService {
   }
 
   async update(id: number, updateColorDto: CreatePatternDto) {
-    const hasCode = await this.patternRepository.findBy({
-      name_uz: updateColorDto.name_uz,
-    });
-
-    if (hasCode && hasCode.id !== id) {
-      throw new ConflictException('Color already exists');
-    }
-
     updateColorDto.name_uz = updateColorDto.name_uz
       .trim()
       .replace(/\s+/g, ' ')
