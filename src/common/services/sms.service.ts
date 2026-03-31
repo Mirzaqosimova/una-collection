@@ -12,7 +12,7 @@ export class SendSmsService {
     @InjectKnex() private readonly knex: Knex,
   ) {}
 
-  async generate_token() {
+  async generate_token(hasToken: boolean = false) {
     const resp: AxiosResponse = await this.httpService.axiosRef.post(
       this.config.get('SMS_LOGIN_URL'),
       {
@@ -25,14 +25,25 @@ export class SendSmsService {
     if (!token) {
       throw new BadRequestException('Eskiz token not found');
     }
+    if (hasToken) {
+      await this.knex('tokens').update({
+        token,
+      });
+    } else {
+      await this.knex('tokens').insert({
+        token,
+      });
+    }
 
-    await this.knex('tokens').insert({
-      token,
-    });
     return { token };
   }
 
-  async sendSmsRequest(token: string, message: string, phone: string) {
+  async sendSmsRequest(
+    token: string,
+    message: string,
+    phone: string,
+    is_first: boolean,
+  ) {
     try {
       await this.httpService.axiosRef.post(
         this.config.get('SMS_SEND_URL'),
@@ -46,9 +57,16 @@ export class SendSmsService {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
+      console.log('seeend');
     } catch (error) {
+      if (error.status == 401 && is_first) {
+        await this.generate_token(true);
+        await this.sendSmsRequest(token, message, phone, false);
+      }
       console.log(error);
-      throw error;
+      if (error.status !== 401) {
+        throw error;
+      }
     }
   }
 
@@ -62,7 +80,7 @@ export class SendSmsService {
       phone = phone.substring(1);
     }
 
-    await this.sendSmsRequest(data.token, message, phone);
+    await this.sendSmsRequest(data.token, message, phone, true);
     return true;
   }
 }

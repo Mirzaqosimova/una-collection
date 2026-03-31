@@ -31,7 +31,7 @@ export class OrdersService {
       payload.phone,
       ORDER_STATUSES.find((x) => x.status == OrderStatus.NEW)[
         'message_' + payload.language
-      ],
+      ](res.id),
     );
     return res;
   }
@@ -92,7 +92,7 @@ export class OrdersService {
       hasOrder.phone,
       ORDER_STATUSES.find((x) => x.status == payload.status)[
         'message_' + hasOrder.language
-      ],
+      ](hasOrder.id),
     );
 
     return res;
