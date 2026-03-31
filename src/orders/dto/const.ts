@@ -4,46 +4,47 @@ export const ORDER_STATUSES = [
   {
     status: OrderStatus.NEW,
     message_uz: (orderId: number) =>
-      `${orderId} raqamli buyurtmangiz qabul qilindi. Tez orada operatorimiz siz bilan bog'lanadi. UNA eco collection`,
+      `${orderId} raqamli buyurtmangiz qabul qilindi. Tez orada operatorimiz siz bilan bog'lanadi. https://unazerowaste.com`,
     message_en: (orderId: number) =>
-      `Your order ${orderId} has been received. Our team will contact you shortly. UNA eco collection`,
+      `Your order ${orderId} has been received. Our team will contact you shortly. https://unazerowaste.com`,
     message_ru: (orderId: number) =>
-      `Ваш заказ ${orderId} принят. В ближайшее время с вами свяжется оператор. UNA eco collection`,
+      `Ваш заказ ${orderId} принят. В ближайшее время с вами свяжется оператор. https://unazerowaste.com`,
   },
   {
     status: OrderStatus.APPROVED,
     message_uz: (_orderId: number) =>
-      `Buyurtmangiz tasdiqlandi va tayyorlanmoqda. Tez orada yetkazib beriladi. UNA eco collection`,
+      `Buyurtmangiz tasdiqlandi va tayyorlanmoqda. Tez orada yetkazib beriladi. https://unazerowaste.com`,
     message_en: (_orderId: number) =>
-      `Your order has been approved and is being prepared. It will be delivered soon. UNA eco collection`,
+      `Your order has been approved and is being prepared. It will be delivered soon. https://unazerowaste.com`,
     message_ru: (_orderId: number) =>
-      `Ваш заказ подтверждён и готовится к отправке. Скоро будет доставлен. UNA eco collection`,
+      `Ваш заказ подтверждён и готовится к отправке. Скоро будет доставлен. https://unazerowaste.com`,
   },
   {
     status: OrderStatus.ON_DELIVERY,
     message_uz: (_orderId: number) =>
-      `Buyurtmangiz yetkazib berilmoqda. Iltimos, qabul qilishga tayyor bo'ling. UNA eco collection`,
+      `Buyurtmangiz yetkazib berilmoqda. Iltimos, qabul qilishga tayyor bo'ling. https://unazerowaste.com`,
     message_en: (_orderId: number) =>
-      `Your order is out for delivery. Please be ready to receive it. UNA eco collection`,
+      `Your order is out for delivery. Please be ready to receive it. https://unazerowaste.com`,
     message_ru: (_orderId: number) =>
-      `Ваш заказ передан в доставку. Пожалуйста, будьте готовы к получению. UNA eco collection`,
+      `Ваш заказ передан в доставку. Пожалуйста, будьте готовы к получению. https://unazerowaste.com`,
   },
   {
     status: OrderStatus.DONE,
     message_uz: (orderId: number) =>
-      `${orderId} raqamli buyurtmangiz muvaffaqiyatli yetkazildi. Xaridingiz uchun rahmat! UNA eco collection`,
+      `${orderId} raqamli buyurtmangiz muvaffaqiyatli yetkazildi. Xaridingiz uchun rahmat! https://unazerowaste.com`,
     message_en: (orderId: number) =>
-      `Your order ${orderId} has been successfully delivered. Thank you for your purchase! UNA eco collection`,
+      `Your order ${orderId} has been successfully delivered. Thank you for your purchase! https://unazerowaste.com`,
     message_ru: (orderId: number) =>
-      `Ваш заказ ${orderId} успешно доставлен. Спасибо за покупку! UNA eco collection`,
+      `Ваш заказ ${orderId} успешно доставлен. Спасибо за покупку! https://unazerowaste.com`,
+    // params: ['https://unazerowaste.com/'],
   },
   {
     status: OrderStatus.REJECTED,
     message_uz: (_orderId: number) =>
-      `Buyurtmangiz rad etildi. Batafsil ma'lumot uchun biz bilan bog'laning. UNA eco collection`,
+      `Buyurtmangiz rad etildi. Batafsil ma'lumot uchun biz bilan bog'laning. https://unazerowaste.com`,
     message_en: (_orderId: number) =>
-      `Unfortunately, your order has been rejected. Please contact us for details. UNA eco collection`,
+      `Unfortunately, your order has been rejected. Please contact us for details. https://unazerowaste.com`,
     message_ru: (_orderId: number) =>
-      `К сожалению, ваш заказ был отклонён. Свяжитесь с нами для уточнения деталей. UNA eco collection`,
+      `К сожалению, ваш заказ был отклонён. Свяжитесь с нами для уточнения деталей. https://unazerowaste.com`,
   },
 ];
