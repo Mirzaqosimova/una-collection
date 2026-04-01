@@ -90,7 +90,8 @@ export class ProductsRepository {
       ) ${where}
     ORDER BY product_options.order
     LIMIT 1) as product_options on true`,
-      );
+      )
+      .orderBy('products.created_at', 'desc');
 
     if (category_id) {
       bQuery.where({ 'products.category_id': category_id });
