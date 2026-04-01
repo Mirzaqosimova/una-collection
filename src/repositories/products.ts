@@ -16,9 +16,39 @@ export class ProductsRepository {
     return this.getBuilder().where(param).first();
   }
 
-  create(payload: CreateProductDto) {
+  async maxOrder(): Promise<number> {
+    const result = await this.getBuilder().max('order as max').first();
+    return Number(result?.max ?? 0);
+  }
+
+  async create(payload: CreateProductDto) {
+    const max = await this.maxOrder();
     return this.getBuilder()
-      .insert(payload)
+      .insert({ ...payload, order: max + 1 })
+      .returning('*')
+      .then((res) => res[0]);
+  }
+
+  async changeOrder(id: number, toOrder: number) {
+    const item = await this.findBy({ id });
+    if (!item) return null;
+    const fromOrder: number = item.order;
+
+    if (fromOrder === toOrder) return item;
+
+    if (toOrder < fromOrder) {
+      await this.getBuilder()
+        .whereBetween('order', [toOrder, fromOrder - 1])
+        .increment('order', 1);
+    } else {
+      await this.getBuilder()
+        .whereBetween('order', [fromOrder + 1, toOrder])
+        .decrement('order', 1);
+    }
+
+    return this.getBuilder()
+      .where({ id })
+      .update({ order: toOrder })
       .returning('*')
       .then((res) => res[0]);
   }
@@ -35,7 +65,7 @@ export class ProductsRepository {
       )
       .leftJoin('categories', 'products.category_id', 'categories.id')
       .leftJoin('product_options', 'products.id', 'product_options.product_id')
-      .orderBy('products.id', 'desc')
+      .orderBy('products.order', 'asc')
       .groupBy('products.id', 'categories.id');
 
     if (q) {
@@ -91,7 +121,7 @@ export class ProductsRepository {
     ORDER BY product_options.order
     LIMIT 1) as product_options on true`,
       )
-      .orderBy('products.created_at', 'desc');
+      .orderBy('products.order', 'asc');
 
     if (category_id) {
       bQuery.where({ 'products.category_id': category_id });

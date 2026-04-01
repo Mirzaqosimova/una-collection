@@ -57,6 +57,7 @@ export class OrdersController {
     return this.ordersService.findOne(id);
   }
 
+  @Public()
   @Patch('change-status/:id')
   update(
     @Param('id', ParseIntPipe) id: number,

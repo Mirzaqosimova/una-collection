@@ -6,6 +6,7 @@ import { OrderStatus } from 'src/common/types/enums';
 import { OrdersQueryDto } from './dto/query.dto';
 import { PaymentsService } from 'src/payments/payments.service';
 import { SendSmsService } from 'src/common/services/sms.service';
+import { TelegramService } from 'src/common/services/telegram.service';
 import { ORDER_STATUSES } from './dto/const';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class OrdersService {
     private readonly ordersRepository: OrdersRepository,
     private readonly paymentsService: PaymentsService,
     private readonly sendSmsService: SendSmsService,
+    private readonly telegramService: TelegramService,
   ) {}
 
   async create(payload: CreateOrderDto, user_id: number) {
@@ -33,6 +35,7 @@ export class OrdersService {
         'message_' + payload.language
       ](res.id),
     );
+    await this.telegramService.sendNewOrder(res);
     return res;
   }
 

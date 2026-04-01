@@ -13,6 +13,7 @@ import { Public } from 'src/common/decorators/is-public.decorator';
 import { CreateProductDto } from './dto/create-products.dto';
 import { ProductsService } from './products.service';
 import { ProductsFilter } from './dto/query.dto';
+import { ChangeOrderDto } from './dto/change-order.dto';
 import { Role } from 'src/common/types/enums';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -56,6 +57,15 @@ export class ProductsController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
+  }
+
+  @Roles(Role.ADMIN)
+  @Patch('change-order/:id')
+  changeOrder(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: ChangeOrderDto,
+  ) {
+    return this.productsService.changeOrder(id, dto);
   }
 
   @Roles(Role.ADMIN)

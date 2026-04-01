@@ -4,6 +4,7 @@ import { ProductOptionsRepository } from 'src/repositories/product_options';
 import { CreateProductDto } from './dto/create-products.dto';
 import { ProductType } from 'src/common/types/enums';
 import { ProductsFilter } from './dto/query.dto';
+import { ChangeOrderDto } from './dto/change-order.dto';
 
 @Injectable()
 export class ProductsService {
@@ -85,6 +86,10 @@ export class ProductsService {
       { id },
       { ...payload, slug: slugName },
     );
+  }
+
+  changeOrder(id: number, dto: ChangeOrderDto) {
+    return this.productsRepository.changeOrder(id, dto.to_order);
   }
 
   async remove(id: number) {

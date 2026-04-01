@@ -9,6 +9,7 @@ import { TransactionsService } from './services/transactions';
 import { KnexOptions } from './options/knex.options';
 import { HashingService } from './services/hashing';
 import { SendSmsService } from './services/sms.service';
+import { TelegramService } from './services/telegram.service';
 import { HttpModule } from '@nestjs/axios';
 
 dotenv.config();
@@ -29,7 +30,7 @@ dotenv.config();
       rootPath: join(cwd(), 'assets', 'files'),
     }),
   ],
-  providers: [TransactionsService, HashingService, SendSmsService],
-  exports: [TransactionsService, HashingService, SendSmsService],
+  providers: [TransactionsService, HashingService, SendSmsService, TelegramService],
+  exports: [TransactionsService, HashingService, SendSmsService, TelegramService],
 })
 export class CoreModules {}
