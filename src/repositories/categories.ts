@@ -54,7 +54,7 @@ export class CategoriesRepository {
 
   async find(query: CategoriesFilter) {
     const { product_type, page, q, lang } = query;
-    const bQuery = this.getBuilder().select('*').orderBy('id', 'desc');
+    const bQuery = this.getBuilder().select('*').orderBy('order');
 
     if (product_type) {
       bQuery.where('product_type', product_type);

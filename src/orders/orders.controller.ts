@@ -77,6 +77,7 @@ export class OrdersController {
     res.status(200).send(payment_link);
   }
 
+  @Roles(Role.ADMIN)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.ordersService.remove(id);

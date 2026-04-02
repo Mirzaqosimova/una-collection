@@ -239,7 +239,26 @@ export class OrdersRepository {
   }
 
   remove(id: number) {
-    return this.getBuilder().where({ id }).delete();
+    return this.knex.transaction(async (trx) => {
+      const clothesOptions = await trx('order_options')
+        .select('order_options.product_option_id')
+        .join(
+          'product_options',
+          'order_options.product_option_id',
+          'product_options.id',
+        )
+        .join('products', 'product_options.product_id', 'products.id')
+        .where({ 'order_options.order_id': id, 'products.type': 'clothes' });
+
+      if (clothesOptions.length) {
+        const productOptionIds = clothesOptions.map((o) => o.product_option_id);
+        await trx('product_options')
+          .whereIn('id', productOptionIds)
+          .update({ is_sold: false });
+      }
+
+      return trx('orders').where({ id }).delete();
+    });
   }
 
   findFiscalCheck(order_id: number) {

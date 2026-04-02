@@ -76,6 +76,7 @@ export class ProductsRepository {
       .clone()
       .clearSelect()
       .clearOrder()
+      .clearGroup()
       .count('products.id');
 
     bQuery.offset(page.offset).limit(page.limit);
