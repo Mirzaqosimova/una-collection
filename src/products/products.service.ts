@@ -19,13 +19,13 @@ export class ProductsService {
       .replace(/\s+/g, ' ')
       .replace(/['‘’`]/g, "'");
 
-    const hasDuplicate = await this.productsRepository.findBy({
-      name_uz: payload.name_uz,
-    });
+    // const hasDuplicate = await this.productsRepository.findBy({
+    //   name_uz: payload.name_uz,
+    // });
 
-    if (hasDuplicate) {
-      throw new ConflictException('product already exists');
-    }
+    // if (hasDuplicate) {
+    //   throw new ConflictException('product already exists');
+    // }
 
     const slugName = createSlug(payload.name_uz);
     return this.productsRepository.create({ ...payload, slug: slugName });
@@ -74,13 +74,13 @@ export class ProductsService {
       .replace(/\s+/g, ' ')
       .replace(/['‘’`]/g, "'");
 
-    const hasDuplicate = await this.productsRepository.findBy({
-      name_uz: payload.name_uz,
-    });
+    // const hasDuplicate = await this.productsRepository.findBy({
+    //   name_uz: payload.name_uz,
+    // });
 
-    if (hasDuplicate && hasDuplicate.id !== id) {
-      throw new ConflictException('product already exists');
-    }
+    // if (hasDuplicate && hasDuplicate.id !== id) {
+    //   throw new ConflictException('product already exists');
+    // }
     const slugName = createSlug(payload.name_uz);
     return this.productsRepository.update(
       { id },
