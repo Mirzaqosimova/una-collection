@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
+import { DeliveryType } from '../types/enums';
 
 @Injectable()
 export class TelegramService {
@@ -40,12 +41,18 @@ export class TelegramService {
     address?: string;
     yandex_address?: string;
   }): Promise<void> {
+    const deliveryName = {
+      [DeliveryType.ONE_DAY]: '24 soat ichida',
+      [DeliveryType.ONE_TWO_HOUR]: '1-3 soat ichida',
+      [DeliveryType.TWO_FIVE_DAYS]: '2-5 kun ichida',
+    };
+
     const lines = [
       `🛒 <b>Yangi buyurtma #${order.id}</b>`,
       ``,
       `👤 <b>Ism:</b> ${order.full_name}`,
       `📞 <b>Telefon:</b> ${order.phone}`,
-      `🚚 <b>Yetkazib berish:</b> ${order.delivery_type}`,
+      `🚚 <b>Yetkazib berish:</b> ${deliveryName[order.delivery_type]} `,
       `💳 <b>To'lov turi:</b> ${order.payment_type}`,
       `💰 <b>Jami:</b> ${Number(order.total_price).toLocaleString()} so'm`,
     ];
