@@ -27,7 +27,8 @@ import { CurrentUser } from 'src/common/decorators/current-user';
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Roles(Role.USER)
+  @Public()
+  // @Roles(Role.USER)
   @Post()
   create(
     @Body() createOrderDto: CreateOrderDto,

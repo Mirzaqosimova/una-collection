@@ -8,7 +8,7 @@ export const ORDER_STATUSES = [
     message_en: (orderId: number) =>
       `Your order ${orderId} has been received. Our team will contact you shortly. https://unazerowaste.com`,
     message_ru: (orderId: number) =>
-      `Ваш заказ ${orderId} принят. В ближайшее время с вами свяжется оператор. https://unazerowaste.com`,
+      `Заказ ${orderId} принят. Скоро свяжемся. https://unazerowaste.com`,
   },
   {
     status: OrderStatus.APPROVED,
@@ -17,7 +17,7 @@ export const ORDER_STATUSES = [
     message_en: (_orderId: number) =>
       `Your order has been approved and is being prepared. It will be delivered soon. https://unazerowaste.com`,
     message_ru: (_orderId: number) =>
-      `Ваш заказ подтверждён и готовится к отправке. Скоро будет доставлен. https://unazerowaste.com`,
+      `Заказ подтверждён, готовится. Скоро доставка. https://unazerowaste.com`,
   },
   {
     status: OrderStatus.ON_DELIVERY,
@@ -45,6 +45,6 @@ export const ORDER_STATUSES = [
     message_en: (_orderId: number) =>
       `Unfortunately, your order has been rejected. Please contact us for details. https://unazerowaste.com`,
     message_ru: (_orderId: number) =>
-      `К сожалению, ваш заказ был отклонён. Свяжитесь с нами для уточнения деталей. https://unazerowaste.com`,
+      `Заказ отклонён. Свяжитесь с нами. https://unazerowaste.com`,
   },
 ];

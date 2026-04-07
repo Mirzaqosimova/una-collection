@@ -19,6 +19,11 @@ export class OrdersService {
   ) {}
 
   async create(payload: CreateOrderDto, user_id: number) {
+    await this.sendSmsService.sendSms(
+      payload.phone,
+      ORDER_STATUSES.find((x) => x.status == OrderStatus.NEW)['message_ru'](87),
+    );
+    return;
     const hasUserActiveOrder = await this.ordersRepository.findBy({
       phone: payload.phone,
       status: OrderStatus.NEW,
@@ -35,7 +40,7 @@ export class OrdersService {
         'message_' + payload.language
       ](res.id),
     );
-    await this.telegramService.sendNewOrder(res);
+    // await this.telegramService.sendNewOrder(res);
     return res;
   }
 
