@@ -35,21 +35,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
       requestQuery: request.query,
       message: errorMessage,
       stack: exception.stack,
+      errorRespData: exception.response?.data,
     };
-    const language: any = request.query['lang'];
     let responseErrorMsg;
-    if (language && ['uz', 'ru'].includes(language)) {
-      responseErrorMsg = ErrorMessage[language][errorMessage]
-        ? ErrorMessage[language][errorMessage]
-        : errorMessage;
-    } else {
-      responseErrorMsg = exception.response.message
-        ? exception.response.message
-        : errorMessage;
-    }
-    if (status !== HttpStatus.UNAUTHORIZED) {
-      message.message =
-        exception.status == 400 ? exception.response.message : errorMessage;
+    responseErrorMsg = exception.response?.message
+      ? exception.response.message
+      : errorMessage;
+
+    if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
       await this.sendMessage(
         process.env.ERROR_SENDER_GROUP_ID,
         this.formatTelegramMessage(message),
@@ -79,6 +72,12 @@ ${JSON.stringify(message.requestBody, null, 2)}
 ${JSON.stringify(message.requestParams, null, 2)}
 \`\`\`
 
+*Response body:*
+\`\`\`
+${JSON.stringify(message.errorRespData, null, 2)}
+\`\`\`
+
+
 *Error Message:*
 \`\`\`
 ${message.message}
@@ -92,7 +91,7 @@ ${message.stack}
   }
 
   async sendMessage(chatId: string, message: string): Promise<any> {
-    const url = `https://api.telegram.org/bot${process.env.ERROR_SENDER_BOT}/sendMessage`;
+    const url = `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`;
     // const url = `https://api.telegram.org/bot{token}/sendMessage`;
 
     const data = {

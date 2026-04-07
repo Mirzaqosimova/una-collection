@@ -3,10 +3,13 @@ import { AppModule } from './app.module';
 import * as cors from 'cors';
 import {
   BadRequestException,
+  Logger,
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { HttpExceptionFilter } from './common/filter/http-exception';
+import { HttpService } from '@nestjs/axios';
 
 export const whiteList: RegExp[] = [/http:\/\/localhost:[0-9]{4}$/];
 export const corsOptions = {
@@ -24,6 +27,7 @@ export const corsOptions = {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalFilters(new HttpExceptionFilter(app.get(HttpService)));
 
   // app.use(
   //   cors({
