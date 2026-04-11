@@ -14,6 +14,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CategoriesModule } from './categories/categories.module';
 import { PatternsModule } from './patterns/patterns.module';
 import { PaymentsModule } from './payments/payments.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { PaymentsModule } from './payments/payments.module';
     CategoriesModule,
     PatternsModule,
     PaymentsModule,
+    CommentsModule,
   ],
 })
 export class AppModule {}

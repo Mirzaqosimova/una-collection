@@ -42,6 +42,12 @@ export enum PatternType {
   PATTERN = 'pattern',
 }
 
+export enum CommentStatus {
+  PENDING = 'PENDING',
+  ACTIVE = 'ACTIVE',
+  REJECTED = 'REJECTED',
+}
+
 export enum TransactionStatus {
   PENDING = 'pending',
   PAID = 'paid',
