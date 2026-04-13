@@ -55,6 +55,7 @@ export class SendSmsService {
         },
         {
           headers: { Authorization: `Bearer ${token}` },
+          timeout: 15000, // 15 seconds
         },
       );
       console.log('seeend');
