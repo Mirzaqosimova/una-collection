@@ -19,21 +19,34 @@ export class CommentsRepository {
       .then((res) => res[0]);
   }
 
-  findAllUserSide() {
-    return this.getBuilder()
+  findAllUserSide({ product_id }: CommentsAdminFilter) {
+    const bQuery = this.getBuilder()
       .where({ status: CommentStatus.ACTIVE })
       .orderBy('created_at', 'desc');
+
+    if (product_id) {
+      bQuery.where({ product_id });
+    }
+    return bQuery;
   }
 
   async findAllAdmin(query: CommentsAdminFilter) {
-    const { page, status } = query;
+    const { page, status, product_id } = query;
     const bQuery = this.getBuilder().orderBy('created_at', 'desc');
 
     if (status) {
       bQuery.where({ status });
     }
 
-    const [totalCount] = await bQuery.clone().count('id');
+    if (product_id) {
+      bQuery.where({ product_id });
+    }
+
+    const [totalCount] = await bQuery
+      .clone()
+      .clearSelect()
+      .clearOrder()
+      .count('id');
 
     bQuery.offset(page.offset).limit(page.limit);
 

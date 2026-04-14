@@ -31,8 +31,8 @@ export class CommentsController {
 
   @Public()
   @Get('user-side')
-  findUserSide() {
-    return this.commentsService.findAllUserSide();
+  findUserSide(@Query() query: CommentsAdminFilter) {
+    return this.commentsService.findAllUserSide(query);
   }
 
   @Roles(Role.ADMIN)

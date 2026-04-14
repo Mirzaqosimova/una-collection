@@ -12,8 +12,8 @@ export class CommentsService {
     return this.commentsRepository.create(payload);
   }
 
-  findAllUserSide() {
-    return this.commentsRepository.findAllUserSide();
+  findAllUserSide(query: CommentsAdminFilter) {
+    return this.commentsRepository.findAllUserSide(query);
   }
 
   findAllAdmin(query: CommentsAdminFilter) {

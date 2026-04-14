@@ -50,17 +50,16 @@ export class OrdersRepository {
             .where({ id: product.product_option_id })
             .update({ is_sold: true });
         }
-        await trx('users')
-          .update({
-            full_name: orderData.full_name,
-            address: orderData.address,
-            yandex_address: orderData.yandex_address,
-            longitude: orderData.longitude,
-            latitude: orderData.latitude,
-          })
-          .where({ id: user_id });
       }
-
+      await trx('users')
+        .update({
+          full_name: orderData.full_name,
+          address: orderData.address,
+          yandex_address: orderData.yandex_address,
+          longitude: orderData.longitude,
+          latitude: orderData.latitude,
+        })
+        .where({ id: user_id });
       return order;
     });
   }
