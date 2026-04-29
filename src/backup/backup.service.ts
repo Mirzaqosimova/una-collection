@@ -19,7 +19,7 @@ export class BackupService {
 
   constructor(private readonly config: ConfigService) {}
 
-  @Cron(CronExpression.EVERY_30_SECONDS)
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async runBackup() {
     console.log('------');
     this.logger.log('Starting backup...');
