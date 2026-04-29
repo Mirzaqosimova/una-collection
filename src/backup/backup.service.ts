@@ -42,14 +42,19 @@ export class BackupService {
   }
 
   private async dumpDatabase(sqlPath: string) {
-    const user = this.config.get<string>('DB_USER');
-    const db = this.config.get<string>('DB_NAME');
-    const container = 'postgres';
+    const user = this.config.get<string>('DB_USER', 'postgres');
+    const password = this.config.get<string>('DB_PASSWORD', 'postgres');
+    const db = this.config.get<string>('DB_NAME', 'postgres');
 
     const { stderr } = await execAsync(
-      `docker exec ${container} pg_dump -U ${user} ${db} > "${sqlPath}"`,
+      `PGPASSWORD="${password}" pg_dump -h 127.0.0.1 -p 5432 -U ${user} ${db} -f "${sqlPath}"`,
       { shell: '/bin/sh' },
     );
+
+    const stat = await fs.stat(sqlPath);
+    if (stat.size === 0) {
+      throw new Error('pg_dump produced an empty file');
+    }
 
     if (stderr) {
       this.logger.warn('pg_dump stderr: ' + stderr);
