@@ -27,12 +27,10 @@ export class BackupService {
     await fs.mkdir(tmpDir, { recursive: true });
 
     const sqlPath = path.join(tmpDir, `backup_${Date.now()}.sql`);
-    const zipPath = path.join(tmpDir, `uploads_${Date.now()}.zip`);
 
     try {
       await this.dumpDatabase(sqlPath);
-      await this.zipUploads(zipPath);
-      await this.sendToTelegram(sqlPath, zipPath);
+      await this.sendToTelegram(sqlPath);
       this.logger.log('Backup sent to Telegram successfully');
     } catch (err) {
       this.logger.error('Backup failed', err?.message);
@@ -74,7 +72,7 @@ export class BackupService {
     });
   }
 
-  private async sendToTelegram(sqlPath: string, zipPath: string) {
+  private async sendToTelegram(sqlPath: string) {
     const token = this.config.get<string>('BOT_TOKEN');
     const chatId = this.config.get<string>('ERROR_SENDER_GROUP_ID');
     const threadId = this.config.get<string>('ERROR_MESSAGE_THREAD_ID');
@@ -82,7 +80,7 @@ export class BackupService {
 
     const now = new Date().toISOString().replace('T', ' ').slice(0, 19);
 
-    for (const filePath of [sqlPath, zipPath]) {
+    for (const filePath of [sqlPath]) {
       const form = new FormData();
       form.append('chat_id', chatId);
       form.append('message_thread_id', threadId);
