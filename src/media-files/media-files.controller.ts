@@ -36,13 +36,12 @@ export class MediaFilesController {
     FileInterceptor('file', {
       limits: { fileSize: 10 * 1024 * 1024 }, // 5 MB limit
       fileFilter: (req, file, callback) => {
-        const allowedTypes = /jpeg|jpg|png|svg|pdf|pdf|zip|rar|webp/;
+        const allowedTypes = /jpeg|jpg|png|svg|webp/;
         const ext = path
           .extname(file.originalname)
           .toLowerCase()
           .replace('.', '');
         const mimetype = file.mimetype;
-
         if (allowedTypes.test(ext) && allowedTypes.test(mimetype)) {
           callback(null, true);
         } else {
@@ -76,7 +75,7 @@ export class MediaFilesController {
     FileInterceptor('file', {
       limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
       fileFilter: (req, file, callback) => {
-        const allowedTypes = /jpeg|jpg|png|svg|pdf|pdf|zip|rar/;
+        const allowedTypes = /jpeg|jpg|png|svg|webp/;
         const ext = path
           .extname(file.originalname)
           .toLowerCase()
@@ -88,7 +87,7 @@ export class MediaFilesController {
         } else {
           callback(
             new BadRequestException(
-              'Invalid file format. Allowed formats: jpg, jpeg, png, svg, pdf, zip, rar.',
+              'Invalid file format. Allowed formats: jpg, jpeg, png, svg, webp.',
             ),
             false,
           );

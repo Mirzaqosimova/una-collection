@@ -32,7 +32,19 @@ export class CommentsRepository {
 
   async findAllAdmin(query: CommentsAdminFilter) {
     const { page, status, product_id } = query;
-    const bQuery = this.getBuilder().orderBy('created_at', 'desc');
+    const bQuery = this.getBuilder()
+      .select(
+        'comments.*',
+        this.knex.raw(`
+          ARRAY(
+            SELECT UNNEST(po.photos)
+            FROM product_options po
+            WHERE po.product_id = comments.product_id
+            ORDER BY po.order
+          ) as photos
+        `),
+      )
+      .orderBy('created_at', 'desc');
 
     if (status) {
       bQuery.where({ status });

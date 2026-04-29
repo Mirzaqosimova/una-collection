@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 import { InjectKnex } from 'nestjs-knex';
 import { getResult } from 'src/common/dto/find-all-response';
-import { OrderStatus } from 'src/common/types/enums';
+import { OrderStatus, ProductType } from 'src/common/types/enums';
 import { CreateOrderDto } from 'src/orders/dto/create-order.dto';
 import { OrdersQueryDto } from 'src/orders/dto/query.dto';
 import { ChangeStatusDto } from 'src/orders/dto/update-order.dto';
@@ -44,13 +44,6 @@ export class OrdersRepository {
       }));
 
       await trx('order_options').insert(options);
-      for (const product of products) {
-        if (!product.quantity) {
-          await trx('product_options')
-            .where({ id: product.product_option_id })
-            .update({ is_sold: true });
-        }
-      }
       await trx('users')
         .update({
           full_name: orderData.full_name,
@@ -257,6 +250,48 @@ export class OrdersRepository {
       }
 
       return trx('orders').where({ id }).delete();
+    });
+  }
+
+  updateInventoryOnDelivery(order_id: number) {
+    return this.knex.transaction(async (trx) => {
+      const options = await trx('order_options')
+        .select(
+          'order_options.product_option_id',
+          'order_options.quantity',
+          'products.type',
+        )
+        .join(
+          'product_options',
+          'order_options.product_option_id',
+          'product_options.id',
+        )
+        .join('products', 'product_options.product_id', 'products.id')
+        .where({ 'order_options.order_id': order_id });
+
+      const updates: Promise<any>[] = [];
+
+      for (const opt of options.filter((o) => o.type === ProductType.PASTELS)) {
+        updates.push(
+          trx('product_options')
+            .where({ id: opt.product_option_id })
+            .decrement('quantity', opt.quantity),
+        );
+      }
+
+      const clothesIds = options
+        .filter((o) => o.type === ProductType.CLOTHES)
+        .map((o) => o.product_option_id);
+
+      if (clothesIds.length) {
+        updates.push(
+          trx('product_options')
+            .whereIn('id', clothesIds)
+            .update({ is_sold: true }),
+        );
+      }
+
+      await Promise.all(updates);
     });
   }
 

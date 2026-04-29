@@ -15,6 +15,7 @@ import { join } from 'path';
 import { cwd } from 'process';
 import { promises as fsPromises } from 'fs';
 import { UpdateMediaFileDto } from './dto/update-media-file.dto';
+import * as sharp from 'sharp';
 
 @Injectable()
 export class MediaFilesService {
@@ -31,9 +32,7 @@ export class MediaFilesService {
 
       const { usage } = dto;
 
-      const ext = path.extname(file.originalname);
-
-      const filename = `${randomUUID()}${ext}`;
+      const filename = `${randomUUID()}.webp`;
 
       dto.filename = filename;
 
@@ -43,7 +42,9 @@ export class MediaFilesService {
 
       const filePath = path.join(uploadDir, filename);
 
-      await fs.writeFile(filePath, file.buffer);
+      const webpBuffer = await sharp(file.buffer).webp().toBuffer();
+
+      await fs.writeFile(filePath, webpBuffer);
 
       return {
         path: usage + `/${filename}`,

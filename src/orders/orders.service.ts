@@ -91,6 +91,10 @@ export class OrdersService {
 
     const [res] = await this.ordersRepository.update({ id }, payload);
 
+    if (payload.status === OrderStatus.ON_DELIVERY) {
+      await this.ordersRepository.updateInventoryOnDelivery(id);
+    }
+
     await this.sendSmsService.sendSms(
       hasOrder.phone,
       ORDER_STATUSES.find((x) => x.status == payload.status)[

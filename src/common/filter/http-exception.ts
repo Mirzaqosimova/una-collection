@@ -98,8 +98,9 @@ ${message.stack}
       chat_id: chatId,
       text: message,
       parse_mode: 'Markdown', // Enable Markdown formatting
+      message_thread_id: 11,
     };
-
+    console.log(url, data);
     if (message.length > 4095) {
       // Handle message splitting if it's too long
       const first_data = {
