@@ -47,10 +47,9 @@ export class BackupService {
     const db = this.config.get<string>('DB_NAME', 'postgres');
 
     const { stderr } = await execAsync(
-      `PGPASSWORD="${password}" pg_dump -h 127.0.0.1 -p 5432 -U ${user} ${db} -f "${sqlPath}"`,
+      `PGPASSWORD="${password}" /usr/lib/postgresql/18/bin/pg_dump -h 127.0.0.1 -p 5432 -U ${user} ${db} -f "${sqlPath}"`,
       { shell: '/bin/sh' },
     );
-
     const stat = await fs.stat(sqlPath);
     if (stat.size === 0) {
       throw new Error('pg_dump produced an empty file');
