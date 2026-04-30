@@ -42,7 +42,7 @@ export class MediaFilesService {
 
       const filePath = path.join(uploadDir, filename);
 
-      const webpBuffer = await sharp(file.buffer).webp().toBuffer();
+      const webpBuffer = await sharp(file.buffer).webp({ quality: 70 }).toBuffer();
 
       await fs.writeFile(filePath, webpBuffer);
 
