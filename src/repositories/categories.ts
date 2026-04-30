@@ -91,7 +91,7 @@ export class CategoriesRepository {
   }
 
   findAllFilter({ product_type }: CategoriesFilter) {
-    const bQuery = this.getBuilder().select('*').orderBy('orderp');
+    const bQuery = this.getBuilder().select('*').orderBy('order');
 
     if (product_type) {
       bQuery.where('product_type', product_type);
