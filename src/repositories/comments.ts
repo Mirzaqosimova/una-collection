@@ -35,6 +35,9 @@ export class CommentsRepository {
     const bQuery = this.getBuilder()
       .select(
         'comments.*',
+        'products.name_uz',
+        'products.name_en',
+        'products.name_ru',
         this.knex.raw(`
           ARRAY(
             SELECT UNNEST(po.photos)
@@ -44,7 +47,8 @@ export class CommentsRepository {
           ) as photos
         `),
       )
-      .orderBy('created_at', 'desc');
+      .leftJoin('products', 'products.id', 'comments.product_id')
+      .orderBy('comments.created_at', 'desc');
 
     if (status) {
       bQuery.where({ status });

@@ -62,7 +62,7 @@ export class ProductsRepository {
         'categories.name_ru as category_name_ru',
         'categories.name_en as category_name_en',
         this.knex.raw(`count(product_options.id) as options_count`),
-      this.knex.raw(`
+        this.knex.raw(`
         CASE
           WHEN products.type = 'pastels' THEN
             COALESCE(BOOL_AND(COALESCE(product_options.quantity, 0) <= 0), false)
@@ -86,7 +86,7 @@ export class ProductsRepository {
       .clearSelect()
       .clearOrder()
       .clearGroup()
-      .count('products.id');
+      .countDistinct('products.id');
 
     bQuery.offset(page.offset).limit(page.limit);
 
