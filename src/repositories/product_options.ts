@@ -28,6 +28,7 @@ export class ProductOptionsRepository {
           jsonb_agg(
             jsonb_build_object(
               'id', product_options.id,
+              'is_sold', product_options.is_sold,
               'pattern_id', product_options.pattern_id,
               'photo', product_options.photos,
               'name_uz', patterns.name_uz,
@@ -43,7 +44,6 @@ export class ProductOptionsRepository {
       )
       .innerJoin('patterns', 'patterns.id', 'product_options.pattern_id')
       .where('product_options.product_id', param.product_id)
-      .andWhere('product_options.is_sold', false)
       .groupBy(
         'product_options.main_color_id',
         'product_options.measurement_id',

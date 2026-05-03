@@ -122,12 +122,9 @@ export class ProductsRepository {
         `inner join lateral(
    SELECT *
     FROM product_options
-    WHERE product_options.product_id = products.id
-      AND (
-        (products.type = 'clothes' AND product_options.is_sold = false)
-        OR
-        (products.type = 'pastels' AND product_options.quantity > 0)
-      ) ${where}
+    WHERE product_options.product_id = products.id and
+        (products.type = 'pastels' AND product_options.quantity > 0 or products.type = 'clothes' )
+       ${where}
     ORDER BY product_options.order
     LIMIT 1) as product_options on true`,
       )
@@ -196,8 +193,8 @@ export class ProductsRepository {
         `),
       )
       .innerJoin('product_options', 'products.id', 'product_options.product_id')
-      .innerJoin('colors', 'product_options.main_color_id', 'colors.id')
-      .innerJoin(
+      .leftJoin('colors', 'product_options.main_color_id', 'colors.id')
+      .leftJoin(
         'measurements',
         'product_options.measurement_id',
         'measurements.id',

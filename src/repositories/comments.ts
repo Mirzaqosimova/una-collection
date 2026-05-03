@@ -62,7 +62,7 @@ export class CommentsRepository {
       .clone()
       .clearSelect()
       .clearOrder()
-      .count('id');
+      .count('comments.id');
 
     bQuery.offset(page.offset).limit(page.limit);
 
