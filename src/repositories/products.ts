@@ -185,11 +185,11 @@ export class ProductsRepository {
         'name_uz', colors.name_uz,
         'name_ru', colors.name_ru,
         'name_en', colors.name_en,
-        'color', colors.color) filter (where colors.id is not null)) as colors,
+        'color', colors.color) )filter (where colors.id is not null) as colors,
         jsonb_agg( distinct jsonb_build_object('id', measurements.id,
         'name_uz', measurements.name_uz,
         'name_ru', measurements.name_ru,
-        'name_en', measurements.name_en)filter (where measurements.id is not null)) as measurements
+        'name_en', measurements.name_en))filter (where measurements.id is not null) as measurements
         `),
       )
       .innerJoin('product_options', 'products.id', 'product_options.product_id')
