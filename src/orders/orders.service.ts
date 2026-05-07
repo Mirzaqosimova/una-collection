@@ -82,12 +82,6 @@ export class OrdersService {
     if (payload.status == OrderStatus.NEW) {
       throw new ConflictException('You can not change status to NEW');
     }
-    if (payload.status == OrderStatus.DONE && !hasOrder.payment_check) {
-      if (!payload.payment_check)
-        throw new ConflictException(
-          'You can not change status to DONE without payment check',
-        );
-    }
 
     const [res] = await this.ordersRepository.update({ id }, payload);
 
