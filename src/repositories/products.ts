@@ -65,9 +65,9 @@ export class ProductsRepository {
         this.knex.raw(`
         CASE
           WHEN products.type = 'pastels' THEN
-            COALESCE(BOOL_AND(COALESCE(product_options.quantity, 0) <= 0), false)
+            COALESCE(BOOL_AND(COALESCE(product_options.quantity, 0) <= 0), true)
           WHEN products.type = 'clothes' THEN
-            COALESCE(BOOL_AND(product_options.is_sold = true), false)
+            COALESCE(BOOL_AND(product_options.is_sold = true), true)
           ELSE false
         END as is_all_sold
       `),
@@ -116,14 +116,27 @@ export class ProductsRepository {
         'products.name_en',
         'products.category_id',
         this.knex.raw(`product_options.photos,
-          case when products.type = 'pastels' then product_options.price else products.price end as price`),
+          case when products.type = 'pastels' then product_options.price else products.price end as price,
+          CASE
+            WHEN products.type = 'clothes' THEN
+              EXISTS (
+                SELECT 1 FROM product_options po_check
+                WHERE po_check.product_id = products.id AND po_check.is_sold = true
+              )
+            WHEN products.type = 'pastels' THEN false
+            ELSE NULL
+          END as is_sold_all`),
       )
       .joinRaw(
         `inner join lateral(
    SELECT *
-    FROM product_options
-    WHERE product_options.product_id = products.id and
-        (products.type = 'pastels' AND product_options.quantity > 0 or products.type = 'clothes' )
+        FROM product_options
+        WHERE product_options.product_id = products.id
+          AND (
+            products.type != 'pastels'
+            OR
+            (products.type = 'pastels' AND product_options.quantity > 0)
+          )
        ${where}
     ORDER BY product_options.order
     LIMIT 1) as product_options on true`,
