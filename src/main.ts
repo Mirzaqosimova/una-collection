@@ -27,7 +27,7 @@ export const corsOptions = {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // app.useGlobalFilters(new HttpExceptionFilter(app.get(HttpService)));
+  app.useGlobalFilters(new HttpExceptionFilter(app.get(HttpService)));
 
   // app.use(
   //   cors({
