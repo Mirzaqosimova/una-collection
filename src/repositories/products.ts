@@ -132,11 +132,6 @@ export class ProductsRepository {
    SELECT *
         FROM product_options
         WHERE product_options.product_id = products.id
-          AND (
-            products.type != 'pastels'
-            OR
-            (products.type = 'pastels' AND product_options.quantity > 0)
-          )
        ${where}
     ORDER BY product_options.order
     LIMIT 1) as product_options on true`,

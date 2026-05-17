@@ -85,7 +85,7 @@ export class OrdersService {
 
     const [res] = await this.ordersRepository.update({ id }, payload);
 
-    if (payload.status === OrderStatus.ON_DELIVERY) {
+    if (payload.status === OrderStatus.DONE) {
       await this.ordersRepository.updateInventoryOnDelivery(id);
     }
 
