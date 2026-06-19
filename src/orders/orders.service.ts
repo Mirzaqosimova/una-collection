@@ -82,11 +82,21 @@ export class OrdersService {
     if (payload.status == OrderStatus.NEW) {
       throw new ConflictException('You can not change status to NEW');
     }
+    if (hasOrder.status === OrderStatus.REJECTED) {
+      throw new ConflictException(
+        'You can not change status of a rejected order',
+      );
+    }
 
     const [res] = await this.ordersRepository.update({ id }, payload);
 
     if (payload.status === OrderStatus.DONE) {
       await this.ordersRepository.updateInventoryOnDelivery(id);
+    } else if (
+      payload.status === OrderStatus.REJECTED &&
+      hasOrder.status === OrderStatus.DONE
+    ) {
+      await this.ordersRepository.updateInventoryOnRejection(id);
     }
 
     await this.sendSmsService.sendSms(
@@ -99,7 +109,7 @@ export class OrdersService {
     return res;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return this.ordersRepository.remove(id);
   }
 

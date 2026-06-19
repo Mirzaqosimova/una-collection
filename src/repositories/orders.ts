@@ -232,21 +232,10 @@ export class OrdersRepository {
 
   remove(id: number) {
     return this.knex.transaction(async (trx) => {
-      const clothesOptions = await trx('order_options')
-        .select('order_options.product_option_id')
-        .join(
-          'product_options',
-          'order_options.product_option_id',
-          'product_options.id',
-        )
-        .join('products', 'product_options.product_id', 'products.id')
-        .where({ 'order_options.order_id': id, 'products.type': 'clothes' });
+      const order = await trx('orders').where({ id }).first();
 
-      if (clothesOptions.length) {
-        const productOptionIds = clothesOptions.map((o) => o.product_option_id);
-        await trx('product_options')
-          .whereIn('id', productOptionIds)
-          .update({ is_sold: false });
+      if (order?.status === OrderStatus.DONE) {
+        await this.restoreInventory(trx, id);
       }
 
       return trx('orders').where({ id }).delete();
@@ -293,6 +282,52 @@ export class OrdersRepository {
 
       await Promise.all(updates);
     });
+  }
+
+  updateInventoryOnRejection(order_id: number) {
+    return this.knex.transaction((trx) =>
+      this.restoreInventory(trx, order_id),
+    );
+  }
+
+  private async restoreInventory(trx: Knex.Transaction, order_id: number) {
+    const options = await trx('order_options')
+      .select(
+        'order_options.product_option_id',
+        'order_options.quantity',
+        'products.type',
+      )
+      .join(
+        'product_options',
+        'order_options.product_option_id',
+        'product_options.id',
+      )
+      .join('products', 'product_options.product_id', 'products.id')
+      .where({ 'order_options.order_id': order_id });
+
+    const updates: Promise<any>[] = [];
+
+    for (const opt of options.filter((o) => o.type === ProductType.PASTELS)) {
+      updates.push(
+        trx('product_options')
+          .where({ id: opt.product_option_id })
+          .increment('quantity', opt.quantity),
+      );
+    }
+
+    const clothesIds = options
+      .filter((o) => o.type === ProductType.CLOTHES)
+      .map((o) => o.product_option_id);
+
+    if (clothesIds.length) {
+      updates.push(
+        trx('product_options')
+          .whereIn('id', clothesIds)
+          .update({ is_sold: false }),
+      );
+    }
+
+    await Promise.all(updates);
   }
 
   findFiscalCheck(order_id: number) {

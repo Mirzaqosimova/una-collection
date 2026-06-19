@@ -24,6 +24,9 @@ export class TelegramService {
           text,
           parse_mode: 'HTML',
         },
+        {
+          timeout: 10000,
+        },
       );
     } catch (error) {
       console.log(error);
