@@ -210,7 +210,6 @@ export class ProductOptionsRepository {
         'measurements.id',
         'product_options.measurement_id',
       )
-      .where('product_options.product_id', arg0.product_id)
-      .andWhereNot('product_options.quantity', 0);
+      .where('product_options.product_id', arg0.product_id);
   }
 }
