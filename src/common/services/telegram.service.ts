@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import * as https from 'https';
-import { DeliveryType } from '../types/enums';
+import { DeliveryType, PaymentType } from '../types/enums';
 
 const ipv4Agent = new https.Agent({ family: 4 });
 
@@ -51,6 +51,64 @@ export class TelegramService {
     } catch (error) {
       console.log(error);
       this.logger.error('Failed to send Telegram message', error?.message);
+      await this.reportError('Telegram sendMessage', error, { text });
+    }
+  }
+
+  async reportError(
+    source: string,
+    error: any,
+    context?: Record<string, any>,
+  ): Promise<void> {
+    const token = this.config.get<string>('BOT_TOKEN');
+    const chatId = this.config.get<string>('ERROR_SENDER_GROUP_ID');
+    const threadId = this.config.get<string>('ERROR_MESSAGE_THREAD_ID');
+
+    if (!chatId) {
+      return;
+    }
+
+    const lines = [
+      `🛑 <b>${source} failed</b>`,
+      `<b>Time:</b> ${new Date().toISOString()}`,
+    ];
+    if (context) {
+      lines.push(
+        `<b>Context:</b>`,
+        `<pre>${JSON.stringify(context, null, 2)}</pre>`,
+      );
+    }
+    lines.push(`<b>Error:</b> ${error?.message ?? String(error)}`);
+    if (error?.response?.data) {
+      lines.push(
+        `<b>Response:</b>`,
+        `<pre>${JSON.stringify(error.response.data, null, 2)}</pre>`,
+      );
+    }
+
+    const text = lines.join('\n').slice(0, 4000);
+
+    try {
+      await this.sendWithRetry(() =>
+        this.httpService.axiosRef.post(
+          `https://api.telegram.org/bot${token}/sendMessage`,
+          {
+            chat_id: chatId,
+            message_thread_id: threadId || undefined,
+            text,
+            parse_mode: 'HTML',
+          },
+          {
+            httpsAgent: ipv4Agent,
+            timeout: 10000,
+          },
+        ),
+      );
+    } catch (reportingError) {
+      this.logger.error(
+        'Failed to report error to Telegram error group',
+        reportingError?.message,
+      );
     }
   }
 
@@ -70,13 +128,17 @@ export class TelegramService {
       [DeliveryType.TWO_FIVE_DAYS]: '2-5 kun ichida',
     };
 
+    const paymentTypeName = {
+      [PaymentType.IN_PERSON]: 'Buyurtmani olganda',
+    };
+
     const lines = [
       `🛒 <b>Yangi buyurtma #${order.id}</b>`,
       ``,
       `👤 <b>Ism:</b> ${order.full_name}`,
       `📞 <b>Telefon:</b> ${order.phone}`,
       `🚚 <b>Yetkazib berish:</b> ${deliveryName[order.delivery_type]} `,
-      `💳 <b>To'lov turi:</b> ${order.payment_type}`,
+      `💳 <b>To'lov turi:</b> ${paymentTypeName[order.payment_type] ?? order.payment_type}`,
       `💰 <b>Jami:</b> ${Number(order.total_price).toLocaleString()} so'm`,
     ];
 

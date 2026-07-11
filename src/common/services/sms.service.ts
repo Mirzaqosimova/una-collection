@@ -3,6 +3,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectKnex, Knex } from 'nestjs-knex';
 import { AxiosResponse } from 'axios';
+import { TelegramService } from './telegram.service';
 
 @Injectable()
 export class SendSmsService {
@@ -10,6 +11,7 @@ export class SendSmsService {
     private readonly config: ConfigService,
     private readonly httpService: HttpService,
     @InjectKnex() private readonly knex: Knex,
+    private readonly telegramService: TelegramService,
   ) {}
 
   async generate_token(hasToken: boolean = false) {
@@ -61,28 +63,47 @@ export class SendSmsService {
       console.log('seeend');
     } catch (error) {
       if (error.status == 401 && is_first) {
-        const { token: newToken } = await this.generate_token(true);
-        await this.sendSmsRequest(newToken, message, phone, false);
+        try {
+          const { token: newToken } = await this.generate_token(true);
+          await this.sendSmsRequest(newToken, message, phone, false);
+        } catch (refreshError) {
+          console.log(refreshError);
+          await this.telegramService.reportError(
+            'Eskiz SMS token refresh',
+            refreshError,
+            { phone, message },
+          );
+        }
         return;
       }
       console.log(error);
-      if (error.status !== 401) {
-        throw error;
-      }
+      await this.telegramService.reportError('Eskiz SMS send', error, {
+        phone,
+        message,
+      });
     }
   }
 
   async sendSms(phone: string, message: string) {
-    let data = await this.knex('tokens').select('*').first();
-    if (!data) {
-      data = await this.generate_token();
-    }
+    try {
+      let data = await this.knex('tokens').select('*').first();
+      if (!data) {
+        data = await this.generate_token();
+      }
 
-    if (phone.startsWith('+')) {
-      phone = phone.substring(1);
-    }
+      if (phone.startsWith('+')) {
+        phone = phone.substring(1);
+      }
 
-    await this.sendSmsRequest(data.token, message, phone, true);
-    return true;
+      await this.sendSmsRequest(data.token, message, phone, true);
+      return true;
+    } catch (error) {
+      console.log(error);
+      await this.telegramService.reportError('Eskiz SMS', error, {
+        phone,
+        message,
+      });
+      return false;
+    }
   }
 }
