@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
+import https from 'https';
 import { DeliveryType } from '../types/enums';
+
+const ipv4Agent = new https.Agent({ family: 4 });
 
 @Injectable()
 export class TelegramService {
@@ -12,21 +15,38 @@ export class TelegramService {
     private readonly httpService: HttpService,
   ) {}
 
+  private async sendWithRetry<T>(
+    fn: () => Promise<T>,
+    attempts = 3,
+  ): Promise<T> {
+    for (let i = 0; i < attempts; i++) {
+      try {
+        return await fn();
+      } catch (e) {
+        if (i === attempts - 1) throw e;
+        await new Promise((r) => setTimeout(r, 2000 * (i + 1)));
+      }
+    }
+  }
+
   async sendMessage(text: string): Promise<void> {
     const token = this.config.get<string>('BOT_TOKEN');
     const chatId = this.config.get<string>('CHANNEL_ID');
 
     try {
-      await this.httpService.axiosRef.post(
-        `https://api.telegram.org/bot${token}/sendMessage`,
-        {
-          chat_id: chatId,
-          text,
-          parse_mode: 'HTML',
-        },
-        {
-          timeout: 10000,
-        },
+      await this.sendWithRetry(() =>
+        this.httpService.axiosRef.post(
+          `https://api.telegram.org/bot${token}/sendMessage`,
+          {
+            chat_id: chatId,
+            text,
+            parse_mode: 'HTML',
+          },
+          {
+            httpsAgent: ipv4Agent,
+            timeout: 10000,
+          },
+        ),
       );
     } catch (error) {
       console.log(error);

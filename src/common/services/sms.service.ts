@@ -61,8 +61,9 @@ export class SendSmsService {
       console.log('seeend');
     } catch (error) {
       if (error.status == 401 && is_first) {
-        await this.generate_token(true);
-        await this.sendSmsRequest(token, message, phone, false);
+        const { token: newToken } = await this.generate_token(true);
+        await this.sendSmsRequest(newToken, message, phone, false);
+        return;
       }
       console.log(error);
       if (error.status !== 401) {
