@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import https from 'https';
+import * as https from 'https';
 import { DeliveryType } from '../types/enums';
 
 const ipv4Agent = new https.Agent({ family: 4 });
